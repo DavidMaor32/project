@@ -30,7 +30,7 @@ int yyerror();
 %right NOT
 %right DEREF
 %right REF
-right INDEX_OPEN
+%right INDEX_OPEN
 %
 
 
