@@ -5,7 +5,7 @@ program: function
 #include <stdio.h>
 int yylex();
 int yyerror();
-}%
+%}
 
 %token COMMENT_OPEN COMMENT_END
 %token REF DEREF
