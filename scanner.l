@@ -16,7 +16,7 @@ string      \"[^\n"]*\" /* TODO:     MUST FIX(i guess?)  -----------------------
 identifier  {LETTER}({CHARACHTER}|_)*
 
 %%
-[\t\s]      ;
+[\t\s]+      ;
 [ \n]       { yylineno+= 1; }
 "/*"        { return COMMENT_OPEN; }
 "*/"        { return COMMENT_END; }
