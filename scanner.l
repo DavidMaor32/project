@@ -44,6 +44,7 @@ private     { return PRIVATE; }
 static      { return STATIC; }
 return      { return RETURN; }
 void        { return VOID; }
+main        { return MAIN; }
 /*Operators*/
 "&&"        { return AND; }
 "=="        { return EQ; }
