@@ -13,7 +13,7 @@ int yyerror();
 %token ARGS PUBLIC PRIVATE STATIC RETURN MAIN
 %token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR 
 %token BLOCK_OPEN BLOCK_CLOSE BRACKET_OPEN BRACKET_CLOSE INDEX_OPEN INDEX_CLOSE
-%token BOOL CHAR STRING INT FLOAT DOUBLE VOID NULL
+%token BOOL CHAR STRING INT FLOAT DOUBLE VOID NULL COLON
 %token LIT_BOOL LIT_CHAR LIT_INT LIT_DOUBLE LIT_FLOAT LIT_STRING 
 %token PTR_INT PTR_FLOAT PTR_DOUBLE PTR_CHAR
 %token WHILE DO FOR
@@ -32,5 +32,40 @@ int yyerror();
 %right REF
 %right INDEX_OPEN
 %%
-s: ;
+s: dec_variables { printf("parsed successfully!\n"); }
+
+literal: LIT_BOOL 
+    | LIT_CHAR 
+    | LIT_DOUBLE 
+    | LIT_FLOAT 
+    | LIT_INT 
+    | LIT_STRING ;
+
+value: literal 
+    | IDENTIFIER ;
+
+type: BOOL 
+    | CHAR 
+    | STRING 
+    | INT 
+    | FLOAT 
+    | DOUBLE ;
+    
+type_pointer: PTR_CHAR 
+    | PTR_DOUBLE 
+    | PTR_FLOAT 
+    | PTR_INT ;
+
+dec_variables: type COLON IDENTIFIER vars | ;
+vars: COMMA IDENTIFIER ass vars | ;
+ass: ASS value | ;
 %%
+#include "lex.yy.c"
+int main(){
+    return yyparse();
+}
+
+int yyerror(){
+    printf("Syntax error in line %d", yylineno);
+    return 0;
+}
