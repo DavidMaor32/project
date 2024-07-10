@@ -2,3 +2,5 @@
 makefile
 settings.json
 *.test
+*.tab.c
+*.yy.c
