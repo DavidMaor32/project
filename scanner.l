@@ -62,10 +62,10 @@ main        { return MAIN; }
 "&"[.]+     { return REF; }     /*maybe delete the [.]+  or put {identifier}*/
 \*[.]+      { return DEREF; }   /*maybe use {identifier} instead*/
  /*Literals*/
-true|false      { yyval = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
-{char}          { yyval = yytext[1]; return LIT_CHAR; }
-{int_dec}           { yyval = atoi(yytext); return LIT_INT; }
-{int_hex}           { yyval = atoi(yytext); return LIT_INT; }
+true|false      { yylval = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
+{char}          { yylval = yytext[1]; return LIT_CHAR; }
+{int_dec}           { yylval = atoi(yytext); return LIT_INT; }
+{int_hex}           { yylval = atoi(yytext); return LIT_INT; }
 {double}        { return LIT_DOUBLE; }
 {float}         { return LIT_FLOAT; }
 {string}        { return LIT_STRING; }
