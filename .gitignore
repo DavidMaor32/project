@@ -1,6 +1,5 @@
-.DS_Store
-makefile
-settings.json
-*.test
-*.tab.c
-*.yy.c
+*
+!*.y
+!*.l
+!makefile
+!.gitignore
