@@ -20,7 +20,7 @@ identifier  {LETTER}({CHARACHTER}|_)*
 [ \n]       { yylineno+= 1; }
 "/*"        { return COMMENT_OPEN; }
 "*/"        { return COMMENT_END; }
-/*KEYWORDS*/
+ /*KEYWORDS*/
 bool        { return BOOL; }
 char        { return CHAR; }
 int         { return INT; }
@@ -45,7 +45,7 @@ static      { return STATIC; }
 return      { return RETURN; }
 void        { return VOID; }
 main        { return MAIN; }
-/*Operators*/
+ /*Operators*/
 "&&"        { return AND; }
 "=="        { return EQ; }
 ">"         { return GRTR; }
@@ -61,7 +61,7 @@ main        { return MAIN; }
 [.]+\*      { return MUL; }     /*maybe use {identifier} instead*/
 "&"[.]+     { return REF; }     /*maybe delete the [.]+  or put {identifier}*/
 \*[.]+      { return DEREF; }   /*maybe use {identifier} instead*/
-/*Literals*/
+ /*Literals*/
 true|false      { yyval = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
 {char}          { yyval = yytext[1]; return LIT_CHAR; }
 {int_dec}           { yyval = atoi(yytext); return LIT_INT; }
@@ -70,7 +70,7 @@ true|false      { yyval = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; 
 {float}         { return LIT_FLOAT; }
 {string}        { return LIT_STRING; }
 {identifier}    { return IDENTIFIER; }
-/*others*/
+ /*others*/
 ";"         { return SEMICOL; }
 ","         { return COMMA; }
 "|"         { return STRLEN; }
