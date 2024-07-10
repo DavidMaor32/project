@@ -4,7 +4,7 @@ program: function
 %{
 #include <stdio.h>
 int yylex();
-int yyerror();
+int yyerror(const char* s);
 %}
 
 %token COMMENT_OPEN COMMENT_END
@@ -13,7 +13,7 @@ int yyerror();
 %token ARGS PUBLIC PRIVATE STATIC RETURN MAIN
 %token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR 
 %token BLOCK_OPEN BLOCK_CLOSE BRACKET_OPEN BRACKET_CLOSE INDEX_OPEN INDEX_CLOSE
-%token BOOL CHAR STRING INT FLOAT DOUBLE VOID NULL COLON
+%token BOOL CHAR STRING INT FLOAT DOUBLE VOID NULLPTR COLON
 %token LIT_BOOL LIT_CHAR LIT_INT LIT_DOUBLE LIT_FLOAT LIT_STRING 
 %token PTR_INT PTR_FLOAT PTR_DOUBLE PTR_CHAR
 %token WHILE DO FOR
@@ -65,7 +65,7 @@ int main(){
     return yyparse();
 }
 
-int yyerror(){
+int yyerror(const char* s){
     printf("Syntax error in line %d", yylineno);
     return 0;
 }

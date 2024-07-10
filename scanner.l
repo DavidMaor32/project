@@ -27,7 +27,7 @@ int         { return INT; }
 double      { return DOUBLE; }
 float       { return FLOAT; }
 string      { return STRING; }
-null        { return NULL; }
+null        { return NULLPTR; }
 "int*"      { return PTR_INT; }
 "float*"    { return PTR_FLOAT; }
 "double*"   { return PTR_DOUBLE; }
