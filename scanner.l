@@ -17,7 +17,7 @@ identifier  {LETTER}({CHARACHTER}|_)*
 
 %%
 [\t\s]+      ;
-[ \n]       { yylineno+= 1; }
+[\n]       { yylineno++; }
 "/*"        { return COMMENT_OPEN; }
 "*/"        { return COMMENT_END; }
  /*KEYWORDS*/
