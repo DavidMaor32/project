@@ -32,44 +32,5 @@ int yyerror();
 %right REF
 %right INDEX_OPEN
 %%
-s: program
-;
-
-program: 
-    function
-|program function
-;
-
-function:
-modifier returnType IDENTIFIER BRACKET_OPEN arguments static body
-;
-
-modifier: 
-    PRIVATE
-| PUBLIC
-;
- 
-returnType: void | type;
-type: BOOL | INT | FLOAT | DOUBLE | CHAR | STRING | ptype;
-ptype: PTR_INT | PTR_FLOAT | PTR_DOUBLE | PTR_CHAR;
-argType: ptype | type;
-
-arguments: BRACKET_CLOSE | ARGS list arglists;
-arglists: SEMICOL list arglists | BRACKET_CLOSE
-list:   argType ":" IDENTIFIER ls;
-ls: COMMA IDENTIFIER ls | IDENTIFIER;
-
-static: ":" STATIC | "NON-STATIC";
-
-body:
-BLOCK_OPEN declarations statements BLOCK_CLOSE;
-
-declarations: declaration
-declaration: dec_var | function;
-
-dec_var:
-VAR type IDENTIFIER dec;
-dec: COMMA IDENTIFIER val dec | SEMICOL;
-val:   "" | ASS value;
-value: literal | functionCall;
+s: ;
 %%
