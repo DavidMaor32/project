@@ -31,10 +31,7 @@ int yyerror();
 %right DEREF
 %right REF
 %right INDEX_OPEN
-%
-
-
-
+%%
 s: program
 ;
 
@@ -51,7 +48,7 @@ modifier:
     PRIVATE
 | PUBLIC
 ;
-
+ 
 returnType: void | type;
 type: BOOL | INT | FLOAT | DOUBLE | CHAR | STRING | ptype;
 ptype: PTR_INT | PTR_FLOAT | PTR_DOUBLE | PTR_CHAR;
@@ -75,3 +72,4 @@ VAR type IDENTIFIER dec;
 dec: COMMA IDENTIFIER val dec | SEMICOL;
 val:   "" | ASS value;
 value: literal | functionCall;
+%%
