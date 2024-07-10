@@ -48,10 +48,11 @@ main        { return MAIN; }
  /*Operators*/
 "&&"        { return AND; }
 "=="        { return EQ; }
-">"         { return GRTR; }
+"<-"        { return ASS; }
 ">="        { return GRTR_EQ; }
-"<"         { return LESS; }
 "<="        { return LESS_EQ; }
+">"         { return GRTR; }
+"<"         { return LESS; }
 "!"         { return NOT; }
 "!="        { return NOT_EQ; }
 "||"        { return OR; }
@@ -80,7 +81,6 @@ true|false      { yylval = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL;
 ")"         { return BRACKET_CLOSE; }
 "["         { return INDEX_OPEN; }
 "]"         { return INDEX_CLOSE; }
-"<-"        { return ASS; }
 ":"         { return COLON; }
 .           { return yytext[0]; }
 %%
