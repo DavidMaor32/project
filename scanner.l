@@ -5,14 +5,14 @@ NONZERO     [1-9]
 SIGN        [\-\+]
 LETTER      [a-zA-Z]
 CHARACHTER  [a-zA-Z0-9]
-char        \'.\' /*maybe check for  break characters? \n \' \" \\ \/ \t etc*/
+char        \'[ -~]\'
 int_dec     0|{NONZERO}{DIGIT}*
 int_hex     0(x|X){DIGIT_HEX}+
 int         (^{SIGN})?({int_hex}|{int_dec})
 ex_notation (e|E){int_dec}
-double      (^{SIGN})?({int_dec}?.{int_dec}|{int_dec}.{int_dec}?){ex_notation}? /*might need to check*/
+double      (^{SIGN})?({int_dec}?.{int_dec}|{int_dec}.{int_dec}?){ex_notation}?
 float       ({double}|{int}.)(f|F)
-string      \"[^\n"]*\" /* TODO:     MUST FIX(i guess?)  --------------------------------------*/
+string      \"[ -!#-~]*\"
 identifier  {LETTER}({CHARACHTER}|_)*
 
 %%
