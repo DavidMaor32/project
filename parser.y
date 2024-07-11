@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
-#define YYDEBUG 1
-int yydebug = 1;
+// #define YYDEBUG 1
+// int yydebug = 1;
 int yylex();
 int yyerror(const char* s);
 typedef enum bool{
@@ -59,7 +59,7 @@ typedef struct string{
 %right REF
 %right '['
 %%
-s: dec_variables ';' s | { printf("parsed successfully!\n");return 0; }
+s: declr_vars s | { printf("parsed successfully!\n");return 0; }
 
 literal: LIT_BOOL 
     | LIT_CHAR 
@@ -78,12 +78,12 @@ type: BOOL
     | FLOAT 
     | REAL ;
     
-/* type_pointer: P_CHAR 
+/* ptype: P_CHAR 
     | P_REAL 
     | P_FLOAT 
     | P_INT ; */
 
-dec_variables: type ':' ID vars | ;
+declr_vars: type ':' ID vars | ;
 vars: ',' ID ass vars | ;
 ass: ASS value | ;
 
