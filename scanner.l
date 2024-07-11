@@ -87,7 +87,7 @@ true|false          {  col+= yyleng;yylval._bool = (strcmp("true",yytext) == 0 ?
 {char}              {  col+= yyleng;yylval._char = yytext[1]; return LIT_CHAR; }
 {int_dec}           {  col+= yyleng;yylval._int = atoi(yytext); return LIT_INT; }
 {int_hex}           {  col+= yyleng;yylval._int = atoi(yytext); return LIT_INT; }
-{double}            {  col+= yyleng;char* pend; yylval._real = strtod(yytext, &pend); return LIT_DOUBLE; }
+{double}            {  col+= yyleng;char* pend; yylval._real = strtod(yytext, &pend); return LIT_REAL; }
 {float}             {  col+= yyleng;return LIT_FLOAT; }
 {string}            {  col+= yyleng;return LIT_STRING; }
 {ID}                {  col+= yyleng;return ID; }

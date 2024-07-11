@@ -41,7 +41,7 @@ typedef struct string{
 
 %token  <_int>      LIT_INT     INT
 %token  <_float>    LIT_FLOAT   FLOAT
-%token  <_real>     LIT_REAL  DOUBLE
+%token  <_real>     LIT_REAL    DOUBLE
 %token  <_char>     LIT_CHAR    CHAR
 %token  <_bool>     LIT_BOOL    BOOL
 %token  <_nullptr>  NULLPTR
