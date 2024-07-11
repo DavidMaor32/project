@@ -1,14 +1,12 @@
 %{
 #include <stdio.h>
-// #define YYDEBUG 1
-// int yydebug = 1;
 int yylex();
 int yyerror(const char* s);
-typedef enum bool{
+typedef enum {
     false, 
     true
 }bool;
-typedef struct string{
+typedef struct {
     char*   str;
     unsigned int   size;
 }string;
@@ -25,12 +23,11 @@ typedef struct string{
     float *  p_float;
     double*  p_real;
     char*    p_char;
-    
     void*   _nullptr;
 };
 
 %token REF DEREF
-%token ID ',' STRLEN VAR
+%token ID  STRLEN VAR
 %token ARGS PUBLIC PRIVATE STATIC RETURN MAIN ASS
 %token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR  
 %token STRING   VOID 
@@ -83,7 +80,7 @@ type: BOOL
     | P_FLOAT 
     | P_INT ; */
 
-declr_vars: type ':' ID vars | ;
+declr_vars: type ':' ID vars | type ':' ID;
 vars: ',' ID ass vars | ;
 ass: ASS value | ;
 
