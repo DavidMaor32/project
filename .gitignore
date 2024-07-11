@@ -3,3 +3,4 @@
 !*.l
 !makefile
 !.gitignore
+!/tests
