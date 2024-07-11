@@ -22,7 +22,7 @@ LEX_SRC = scanner.l
 YACC_SRC = parser.y
 
 # compiler name
-EXEC = compiler
+EXEC = compiler.exe
 
 
 CC = gcc
@@ -35,6 +35,7 @@ YACC_OUT = y.tab.c
 
 # default target
 all: $(EXEC)
+
 
 # how to build the executable(compiler)
 $(EXEC): $(YACC_OUT) $(LEX_OUT)
