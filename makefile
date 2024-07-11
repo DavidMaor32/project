@@ -27,6 +27,7 @@ EXEC = compiler
 
 CC = gcc
 FLAGS = -ll -Ly
+FLAGS_DEBUG = --debug --verbose --graph
 LEX = lex
 YACC = yacc
 LEX_OUT = lex.yy.c
@@ -47,8 +48,11 @@ $(LEX_OUT): $(LEX_SRC)
 $(YACC_OUT): $(YACC_SRC)
 	$(YACC) $(YACC_SRC)
 
+# debug
+debug:
+	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
 # clean all generated files
 clean:
-	rm -f $(EXEC) $(LEX_OUT) $(YACC_OUT) y.output y.tab.*
+	rm -f $(EXEC) $(LEX_OUT) $(YACC_OUT) y.*
 
 .PHONY: all clean
