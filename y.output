@@ -1,0 +1,414 @@
+Terminals which are not used
+
+   REF
+   DEREF
+   STRLEN
+   VAR
+   ARGS
+   PUBLIC
+   PRIVATE
+   STATIC
+   RETURN
+   MAIN
+   AND
+   EQ
+   GRTR
+   GRTR_EQ
+   LESS
+   LESS_EQ
+   NOT
+   NOT_EQ
+   OR
+   VOID
+   P_INT
+   P_FLOAT
+   P_REAL
+   P_CHAR
+   WHILE
+   DO
+   FOR
+   IF
+   ELSE
+   NULLPTR
+   SUB
+   ADD
+   DIV
+   MUL
+   '['
+
+
+State 13 conflicts: 7 reduce/reduce
+
+
+Grammar
+
+    0 $accept: s $end
+
+    1 s: declr_vars s
+    2  | /* empty */
+
+    3 literal: LIT_BOOL
+    4        | LIT_CHAR
+    5        | LIT_REAL
+    6        | LIT_FLOAT
+    7        | LIT_INT
+    8        | LIT_STRING
+
+    9 value: literal
+   10      | ID
+
+   11 type: BOOL
+   12     | CHAR
+   13     | STRING
+   14     | INT
+   15     | FLOAT
+   16     | REAL
+
+   17 declr_vars: type ':' ID vars
+   18           | type ':' ID
+
+   19 vars: ',' ID ass vars
+   20     | /* empty */
+
+   21 ass: ASS value
+   22    | /* empty */
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+',' (44) 19
+':' (58) 17 18
+'[' (91)
+error (256)
+REF (258)
+DEREF (259)
+ID (260) 10 17 18 19
+STRLEN (261)
+VAR (262)
+ARGS (263)
+PUBLIC (264)
+PRIVATE (265)
+STATIC (266)
+RETURN (267)
+MAIN (268)
+ASS (269) 21
+AND (270)
+EQ (271)
+GRTR (272)
+GRTR_EQ (273)
+LESS (274)
+LESS_EQ (275)
+NOT (276)
+NOT_EQ (277)
+OR (278)
+STRING (279) 13
+VOID (280)
+LIT_STRING (281) 8
+P_INT (282)
+P_FLOAT (283)
+P_REAL (284)
+P_CHAR (285)
+WHILE (286)
+DO (287)
+FOR (288)
+IF (289)
+ELSE (290)
+LIT_INT (291) 7
+INT (292) 14
+LIT_FLOAT (293) 6
+FLOAT (294) 15
+LIT_REAL (295) 5
+REAL (296) 16
+LIT_CHAR (297) 4
+CHAR (298) 12
+LIT_BOOL (299) 3
+BOOL (300) 11
+NULLPTR (301)
+SUB (302)
+ADD (303)
+DIV (304)
+MUL (305)
+
+
+Nonterminals, with rules where they appear
+
+$accept (54)
+    on left: 0
+s (55)
+    on left: 1 2, on right: 0 1
+literal (56)
+    on left: 3 4 5 6 7 8, on right: 9
+value (57)
+    on left: 9 10, on right: 21
+type (58)
+    on left: 11 12 13 14 15 16, on right: 17 18
+declr_vars (59)
+    on left: 17 18, on right: 1
+vars (60)
+    on left: 19 20, on right: 17 19
+ass (61)
+    on left: 21 22, on right: 19
+
+
+state 0
+
+    0 $accept: . s $end
+
+    STRING  shift, and go to state 1
+    INT     shift, and go to state 2
+    FLOAT   shift, and go to state 3
+    REAL    shift, and go to state 4
+    CHAR    shift, and go to state 5
+    BOOL    shift, and go to state 6
+
+    $default  reduce using rule 2 (s)
+
+    s           go to state 7
+    type        go to state 8
+    declr_vars  go to state 9
+
+
+state 1
+
+   13 type: STRING .
+
+    $default  reduce using rule 13 (type)
+
+
+state 2
+
+   14 type: INT .
+
+    $default  reduce using rule 14 (type)
+
+
+state 3
+
+   15 type: FLOAT .
+
+    $default  reduce using rule 15 (type)
+
+
+state 4
+
+   16 type: REAL .
+
+    $default  reduce using rule 16 (type)
+
+
+state 5
+
+   12 type: CHAR .
+
+    $default  reduce using rule 12 (type)
+
+
+state 6
+
+   11 type: BOOL .
+
+    $default  reduce using rule 11 (type)
+
+
+state 7
+
+    0 $accept: s . $end
+
+    $end  shift, and go to state 10
+
+
+state 8
+
+   17 declr_vars: type . ':' ID vars
+   18           | type . ':' ID
+
+    ':'  shift, and go to state 11
+
+
+state 9
+
+    1 s: declr_vars . s
+
+    STRING  shift, and go to state 1
+    INT     shift, and go to state 2
+    FLOAT   shift, and go to state 3
+    REAL    shift, and go to state 4
+    CHAR    shift, and go to state 5
+    BOOL    shift, and go to state 6
+
+    $default  reduce using rule 2 (s)
+
+    s           go to state 12
+    type        go to state 8
+    declr_vars  go to state 9
+
+
+state 10
+
+    0 $accept: s $end .
+
+    $default  accept
+
+
+state 11
+
+   17 declr_vars: type ':' . ID vars
+   18           | type ':' . ID
+
+    ID  shift, and go to state 13
+
+
+state 12
+
+    1 s: declr_vars s .
+
+    $default  reduce using rule 1 (s)
+
+
+state 13
+
+   17 declr_vars: type ':' ID . vars
+   18           | type ':' ID .
+
+    ','  shift, and go to state 14
+
+    $end      reduce using rule 18 (declr_vars)
+    $end      [reduce using rule 20 (vars)]
+    STRING    reduce using rule 18 (declr_vars)
+    STRING    [reduce using rule 20 (vars)]
+    INT       reduce using rule 18 (declr_vars)
+    INT       [reduce using rule 20 (vars)]
+    FLOAT     reduce using rule 18 (declr_vars)
+    FLOAT     [reduce using rule 20 (vars)]
+    REAL      reduce using rule 18 (declr_vars)
+    REAL      [reduce using rule 20 (vars)]
+    CHAR      reduce using rule 18 (declr_vars)
+    CHAR      [reduce using rule 20 (vars)]
+    BOOL      reduce using rule 18 (declr_vars)
+    BOOL      [reduce using rule 20 (vars)]
+    $default  reduce using rule 18 (declr_vars)
+
+    vars  go to state 15
+
+
+state 14
+
+   19 vars: ',' . ID ass vars
+
+    ID  shift, and go to state 16
+
+
+state 15
+
+   17 declr_vars: type ':' ID vars .
+
+    $default  reduce using rule 17 (declr_vars)
+
+
+state 16
+
+   19 vars: ',' ID . ass vars
+
+    ASS  shift, and go to state 17
+
+    $default  reduce using rule 22 (ass)
+
+    ass  go to state 18
+
+
+state 17
+
+   21 ass: ASS . value
+
+    ID          shift, and go to state 19
+    LIT_STRING  shift, and go to state 20
+    LIT_INT     shift, and go to state 21
+    LIT_FLOAT   shift, and go to state 22
+    LIT_REAL    shift, and go to state 23
+    LIT_CHAR    shift, and go to state 24
+    LIT_BOOL    shift, and go to state 25
+
+    literal  go to state 26
+    value    go to state 27
+
+
+state 18
+
+   19 vars: ',' ID ass . vars
+
+    ','  shift, and go to state 14
+
+    $default  reduce using rule 20 (vars)
+
+    vars  go to state 28
+
+
+state 19
+
+   10 value: ID .
+
+    $default  reduce using rule 10 (value)
+
+
+state 20
+
+    8 literal: LIT_STRING .
+
+    $default  reduce using rule 8 (literal)
+
+
+state 21
+
+    7 literal: LIT_INT .
+
+    $default  reduce using rule 7 (literal)
+
+
+state 22
+
+    6 literal: LIT_FLOAT .
+
+    $default  reduce using rule 6 (literal)
+
+
+state 23
+
+    5 literal: LIT_REAL .
+
+    $default  reduce using rule 5 (literal)
+
+
+state 24
+
+    4 literal: LIT_CHAR .
+
+    $default  reduce using rule 4 (literal)
+
+
+state 25
+
+    3 literal: LIT_BOOL .
+
+    $default  reduce using rule 3 (literal)
+
+
+state 26
+
+    9 value: literal .
+
+    $default  reduce using rule 9 (value)
+
+
+state 27
+
+   21 ass: ASS value .
+
+    $default  reduce using rule 21 (ass)
+
+
+state 28
+
+   19 vars: ',' ID ass vars .
+
+    $default  reduce using rule 19 (vars)

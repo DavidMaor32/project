@@ -1,7 +1,4 @@
-*
-!*.y
-!*.l
-!makefile
-!.gitignore
-!tests/
-!test/**
+*.exe
+*.c
+*.h
+.DS_Store
