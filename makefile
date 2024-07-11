@@ -49,6 +49,6 @@ $(YACC_OUT): $(YACC_SRC)
 
 # clean all generated files
 clean:
-	rm -f $(EXEC) $(LEX_OUT) $(YACC_OUT)
+	rm -f $(EXEC) $(LEX_OUT) $(YACC_OUT) y.output y.tab.*
 
 .PHONY: all clean
