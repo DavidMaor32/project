@@ -1,4 +1,5 @@
 *.exe
 *.c
 *.h
+*.output
 .DS_Store
