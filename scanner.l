@@ -83,11 +83,11 @@ main                {  col+= yyleng;return MAIN; }
 "&"{ID}             {  col+= yyleng;return REF; }
 \*{ID}              {  col+= yyleng;return DEREF; }
  /*Literals*/
-true|false          {  col+= yyleng;yylval.type_bool = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
-{char}              {  col+= yyleng;yylval.type_char = yytext[1]; return LIT_CHAR; }
-{int_dec}           {  col+= yyleng;yylval.type_integer = atoi(yytext); return LIT_INT; }
-{int_hex}           {  col+= yyleng;yylval.type_integer = atoi(yytext); return LIT_INT; }
-{double}            {  col+= yyleng;char* pend; yylval.type_double = strtod(yytext, &pend); return LIT_DOUBLE; }
+true|false          {  col+= yyleng;yylval._bool = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
+{char}              {  col+= yyleng;yylval._char = yytext[1]; return LIT_CHAR; }
+{int_dec}           {  col+= yyleng;yylval._int = atoi(yytext); return LIT_INT; }
+{int_hex}           {  col+= yyleng;yylval._int = atoi(yytext); return LIT_INT; }
+{double}            {  col+= yyleng;char* pend; yylval._real = strtod(yytext, &pend); return LIT_DOUBLE; }
 {float}             {  col+= yyleng;return LIT_FLOAT; }
 {string}            {  col+= yyleng;return LIT_STRING; }
 {ID}                {  col+= yyleng;return ID; }
