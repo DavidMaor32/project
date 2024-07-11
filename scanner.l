@@ -12,34 +12,34 @@ ex_notation (e|E){int_dec}
 double      {SIGN}?({int_dec}?\.{int_dec}|{int_dec}\.{int_dec}?){ex_notation}?
 float       ({double}|{lit_int}\.)(f|F)
 string      \"[ -!#-~]*\"
-identifier  {LETTER}({CHARACHTER}|_)*
+ID  {LETTER}({CHARACHTER}|_)*
 %{
     #include <stdlib.h>
     int col = 1;
 %}
 %%
-[ \t\s]     {col++;}
-[\n]        { yylineno++; col = 1; }
-"/*"        {
-                char c;
-                for ( ; ; ){
-                    do{
-                        c = input();
-                        col++;
-                        if ( c == '\n')
-                            yylineno++;
-                    }while ( c != '*' && c != EOF );    /* eat up text of comment */
-                    if ( c == '*' ){
-                        while ( (c = input()) == '*' );
-                        if ( c == '/' )
-                            break;    /* found the end */
-                    }
-                    if ( c == EOF ){
-                        yyerror( "EOF in comment");
-                        break;
+[ \t\s\r]           {col++;}
+[ \n]               { yylineno++; col = 1; }
+"/*"                {
+                        char c;
+                        while (1){
+                            do{
+                                c = input();
+                                col++;
+                                if ( c == '\n')
+                                    yylineno++;
+                            }while ( c != '*' && c != EOF );    /* eat up text of comment */
+                            if ( c == '*' ){
+                                while ( (c = input()) == '*' );
+                                if ( c == '/' )
+                                    break;    /* found the end */
+                            }
+                            if ( c == EOF ){
+                                yyerror( "EOF in comment");
+                                break;
+                                }
+                            }
                         }
-                    }
-                }
  /*KEYWORDS*/
 bool                {  col+= yyleng;return BOOL; }
 char                {  col+= yyleng;return CHAR; }
@@ -79,9 +79,9 @@ main                {  col+= yyleng;return MAIN; }
 "/"                 {  col+= yyleng;return DIV; }
 "-"                 {  col+= yyleng;return SUB; }
 "+"                 {  col+= yyleng;return ADD; }
-{identifier}\*      {  col+= yyleng;return MUL; }
-"&"{identifier}     {  col+= yyleng;return REF; }
-\*{identifier}      {  col+= yyleng;return DEREF; }
+{ID}\*              {  col+= yyleng;return MUL; }
+"&"{ID}             {  col+= yyleng;return REF; }
+\*{ID}              {  col+= yyleng;return DEREF; }
  /*Literals*/
 true|false          {  col+= yyleng;yylval.type_bool = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
 {char}              {  col+= yyleng;yylval.type_char = yytext[1]; return LIT_CHAR; }
@@ -90,17 +90,7 @@ true|false          {  col+= yyleng;yylval.type_bool = (strcmp("true",yytext) ==
 {double}            {  col+= yyleng;char* pend; yylval.type_double = strtod(yytext, &pend); return LIT_DOUBLE; }
 {float}             {  col+= yyleng;return LIT_FLOAT; }
 {string}            {  col+= yyleng;return LIT_STRING; }
-{identifier}        {  col+= yyleng;return IDENTIFIER; }
+{ID}                {  col+= yyleng;return ID; }
  /*others*/
-";"                 {  col+= yyleng;return SEMICOL; }
-","                 {  col+= yyleng;return COMMA; }
-"|"                 {  col+= yyleng;return STRLEN; }
-"{"                 {  col+= yyleng;return BLOCK_OPEN; }
-"}"                 {  col+= yyleng;return BLOCK_CLOSE; }
-"("                 {  col+= yyleng;return BRACKET_OPEN; }
-")"                 {  col+= yyleng;return BRACKET_CLOSE; }
-"["                 {  col+= yyleng;return INDEX_OPEN; }
-"]"                 {  col+= yyleng;return INDEX_CLOSE; }
-":"                 {  col+= yyleng;return COLON; }
 .                   {  yyerror("UNRECOGNIZED TOKEN ");col+= yyleng;return yytext[0]; }
 %%

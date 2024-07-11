@@ -1,5 +1,7 @@
 %{
 #include <stdio.h>
+#define YYDEBUG 1
+int yydebug = 1;
 int yylex();
 int yyerror(const char* s);
 typedef enum bool{
@@ -13,39 +15,38 @@ typedef struct string{
 
 %}
 %union{
-    int     type_integer;
-    float   type_float;
-    double  type_double;
-    char    type_char;
-    bool    type_bool;
-    string  type_string;
-    int*     type_pinteger;
-    float *  type_pfloat;
-    double*  type_pdouble;
-    char*    type_pchar;
+    int     _int;
+    float   _float;
+    double  _real;
+    char    _char;
+    bool    _bool;
+    string  _str;
+    int*     p_int;
+    float *  p_float;
+    double*  p_real;
+    char*    p_char;
     
-    void*   type_null;
+    void*   _nullptr;
 };
 
 %token REF DEREF
-%token IDENTIFIER  SEMICOL COMMA STRLEN VAR
+%token ID ',' STRLEN VAR
 %token ARGS PUBLIC PRIVATE STATIC RETURN MAIN ASS
-%token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR 
-%token BLOCK_OPEN BLOCK_CLOSE BRACKET_OPEN BRACKET_CLOSE INDEX_OPEN INDEX_CLOSE
-%token STRING   VOID COLON
+%token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR  
+%token STRING   VOID 
 %token LIT_STRING 
-%token PTR_INT PTR_FLOAT PTR_DOUBLE PTR_CHAR
+%token P_INT P_FLOAT P_REAL P_CHAR
 %token WHILE DO FOR
 %token IF ELSE
 
-%token  <type_integer>  LIT_INT     INT
-%token  <type_float>    LIT_FLOAT   FLOAT
-%token  <type_double>   LIT_DOUBLE  DOUBLE
-%token  <type_char>     LIT_CHAR    CHAR
-%token  <type_bool>     LIT_BOOL    BOOL
-%token  <type_null>     NULLPTR
+%token  <_int>      LIT_INT     INT
+%token  <_float>    LIT_FLOAT   FLOAT
+%token  <_real>     LIT_REAL  DOUBLE
+%token  <_char>     LIT_CHAR    CHAR
+%token  <_bool>     LIT_BOOL    BOOL
+%token  <_nullptr>  NULLPTR
 
-%left COMMA
+%left ','
 %right ASS
 %left OR
 %left AND
@@ -56,19 +57,19 @@ typedef struct string{
 %right NOT
 %right DEREF
 %right REF
-%right INDEX_OPEN
+%right '['
 %%
-s: dec_variables SEMICOL s | { printf("parsed successfully!\n");return 0; }
+s: dec_variables ';' s | { printf("parsed successfully!\n");return 0; }
 
 literal: LIT_BOOL 
     | LIT_CHAR 
-    | LIT_DOUBLE 
+    | LIT_REAL 
     | LIT_FLOAT 
     | LIT_INT 
     | LIT_STRING ;
 
 value: literal 
-    | IDENTIFIER ;
+    | ID ;
 
 type: BOOL 
     | CHAR 
@@ -77,24 +78,25 @@ type: BOOL
     | FLOAT 
     | DOUBLE ;
     
-type_pointer: PTR_CHAR 
-    | PTR_DOUBLE 
-    | PTR_FLOAT 
-    | PTR_INT ;
+/* type_pointer: P_CHAR 
+    | P_REAL 
+    | P_FLOAT 
+    | P_INT ; */
 
-dec_variables: type COLON IDENTIFIER vars | ;
-vars: COMMA IDENTIFIER ass vars | ;
+dec_variables: type ':' ID vars | ;
+vars: ',' ID ass vars | ;
 ass: ASS value | ;
 
 
-expr: ;
+/* expr: arith;
+
 arith: 
     |ADD expr { $$ = $1; }
-    |MINUS expr {$$ = -1 * $1; }
+    |SUB expr {$$ = -1 * $1; }
 
 comp:;
 logic:expr OR expr;
-mem_access:;
+mem_access:; */
 
 %%
 #include "lex.yy.c"
