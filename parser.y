@@ -11,10 +11,10 @@ typedef struct {
     char*   str;
     unsigned int   size;
 }string;
-typedef struct {
-    char* name;
-    yylval val;
-}yystype;
+// typedef struct {
+//     char* name;
+//     yylval val;
+// }yystype;
 %}
 %union{
     int     _int;
