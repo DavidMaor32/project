@@ -5,7 +5,8 @@ Terminals which are not used
    WHILE
    DO
    FOR
-   STRLEN
+   VAR
+   ASS
    PUBLIC
    PRIVATE
    ARGS
@@ -13,84 +14,101 @@ Terminals which are not used
    MAIN
    RETURN
    VOID
-   AND
-   EQ
-   GRTR
-   GRTR_EQ
-   LESS
    LESS_EQ
-   NOT
-   NOT_EQ
-   OR
-   DIV
-   MINUS
-   PLUS
-   MUL
-   DEREF
-   REF
+   COLON
+   COMMA
    BLOCK_OPEN
    BLOCK_CLOSE
-   PARENT_OPEN
-   PARENT_CLOSE
-   INDEX_OPEN
-   INDEX_CLOSE
+   INT
+   FLOAT
+   REAL
+   CHAR
+   BOOL
    NULLPTR
    P_INT
    P_FLOAT
    P_REAL
    P_CHAR
+   STRING
+
+
+Rules never reduced
+
+   30 expr_logic: expr AND expr
+   31           | expr AND expr
+   32           | expr AND expr
+   36           | expr GRTR_EQ expr
+
+
+State 47 conflicts: 5 reduce/reduce
+State 50 conflicts: 7 reduce/reduce
 
 
 Grammar
 
     0 $accept: s $end
 
-    1 s: program
+    1 s: expr SEMICOL
 
-    2 program: dec
+    2 literal: LIT_BOOL
+    3        | LIT_CHAR
+    4        | LIT_REAL
+    5        | LIT_FLOAT
+    6        | LIT_INT
 
-    3 literal: LIT_BOOL
-    4        | LIT_CHAR
-    5        | LIT_REAL
-    6        | LIT_FLOAT
-    7        | LIT_INT
-    8        | LIT_STRING
+    7 value: literal
+    8      | ID
 
-    9 value: literal
-   10      | ID
+    9 string: ID
+   10       | LIT_STRING
 
-   11 type: BOOL
-   12     | CHAR
-   13     | STRING
-   14     | INT
-   15     | FLOAT
-   16     | REAL
+   11 expr: value
+   12     | PARENT_OPEN expr PARENT_CLOSE
+   13     | STRLEN string STRLEN
+   14     | string INDEX_OPEN expr INDEX_CLOSE
+   15     | expr_math
+   16     | expr_logic
 
-   17 dec: declr_vars
-   18    | dec declr_vars
+   17 expr_math: '-' expr
+   18          | '+' expr
+   19          | '*' expr
+   20          | '&' expr
+   21          | expr PLUS expr
+   22          | expr MINUS expr
+   23          | expr MUL expr
+   24          | expr DIV expr
 
-   19 declr_vars: VAR type COLON ID ass vars SEMICOL
-
-   20 vars: vars COMMA ID ass
-   21     | /* empty */
-
-   22 ass: ASS value
-   23    | /* empty */
+   25 expr_logic: NOT expr
+   26           | expr AND expr
+   27           | expr OR expr
+   28           | expr EQ expr
+   29           | expr NOT_EQ expr
+   30           | expr AND expr
+   31           | expr AND expr
+   32           | expr AND expr
+   33           | expr GRTR expr
+   34           | expr GRTR_EQ expr
+   35           | expr LESS expr
+   36           | expr GRTR_EQ expr
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
+'&' (38) 20
+'*' (42) 19
+'+' (43) 18
+'-' (45) 17
 error (256)
 IF (258)
 ELSE (259)
 WHILE (260)
 DO (261)
 FOR (262)
-ID (263) 10 19 20
-STRLEN (264)
-VAR (265) 19
-ASS (266) 22
+ID (263) 8 9
+STRLEN (264) 13
+VAR (265)
+ASS (266)
 PUBLIC (267)
 PRIVATE (268)
 ARGS (269)
@@ -98,337 +116,1305 @@ STATIC (270)
 MAIN (271)
 RETURN (272)
 VOID (273)
-AND (274)
-EQ (275)
-GRTR (276)
-GRTR_EQ (277)
-LESS (278)
+AND (274) 26 30 31 32
+EQ (275) 28
+GRTR (276) 33
+GRTR_EQ (277) 34 36
+LESS (278) 35
 LESS_EQ (279)
-NOT (280)
-NOT_EQ (281)
-OR (282)
-DIV (283)
-MINUS (284)
-PLUS (285)
-MUL (286)
+NOT (280) 25
+NOT_EQ (281) 29
+OR (282) 27
+DIV (283) 24
+MINUS (284) 22
+PLUS (285) 21
+MUL (286) 23
 DEREF (287)
 REF (288)
-COLON (289) 19
-SEMICOL (290) 19
-COMMA (291) 20
+COLON (289)
+SEMICOL (290) 1
+COMMA (291)
 BLOCK_OPEN (292)
 BLOCK_CLOSE (293)
-PARENT_OPEN (294)
-PARENT_CLOSE (295)
-INDEX_OPEN (296)
-INDEX_CLOSE (297)
-LIT_INT (298) 7
-INT (299) 14
-LIT_FLOAT (300) 6
-FLOAT (301) 15
-LIT_REAL (302) 5
-REAL (303) 16
-LIT_CHAR (304) 4
-CHAR (305) 12
-LIT_BOOL (306) 3
-BOOL (307) 11
+PARENT_OPEN (294) 12
+PARENT_CLOSE (295) 12
+INDEX_OPEN (296) 14
+INDEX_CLOSE (297) 14
+LIT_INT (298) 6
+INT (299)
+LIT_FLOAT (300) 5
+FLOAT (301)
+LIT_REAL (302) 4
+REAL (303)
+LIT_CHAR (304) 3
+CHAR (305)
+LIT_BOOL (306) 2
+BOOL (307)
 NULLPTR (308)
 P_INT (309)
 P_FLOAT (310)
 P_REAL (311)
 P_CHAR (312)
-LIT_STRING (313) 8
-STRING (314) 13
+LIT_STRING (313) 10
+STRING (314)
+UMINUS (315)
+UPLUS (316)
 
 
 Nonterminals, with rules where they appear
 
-$accept (60)
+$accept (66)
     on left: 0
-s (61)
+s (67)
     on left: 1, on right: 0
-program (62)
-    on left: 2, on right: 1
-literal (63)
-    on left: 3 4 5 6 7 8, on right: 9
-value (64)
-    on left: 9 10, on right: 22
-type (65)
-    on left: 11 12 13 14 15 16, on right: 19
-dec (66)
-    on left: 17 18, on right: 2 18
-declr_vars (67)
-    on left: 19, on right: 17 18
-vars (68)
-    on left: 20 21, on right: 19 20
-ass (69)
-    on left: 22 23, on right: 19 20
+literal (68)
+    on left: 2 3 4 5 6, on right: 7
+value (69)
+    on left: 7 8, on right: 11
+string (70)
+    on left: 9 10, on right: 13 14
+expr (71)
+    on left: 11 12 13 14 15 16, on right: 1 12 14 17 18 19 20 21 22
+    23 24 25 26 27 28 29 30 31 32 33 34 35 36
+expr_math (72)
+    on left: 17 18 19 20 21 22 23 24, on right: 15
+expr_logic (73)
+    on left: 25 26 27 28 29 30 31 32 33 34 35 36, on right: 16
 
 
 state 0
 
     0 $accept: . s $end
 
-    VAR  shift, and go to state 1
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
 
-    s           go to state 2
-    program     go to state 3
-    dec         go to state 4
-    declr_vars  go to state 5
+    s           go to state 15
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 19
+    expr_math   go to state 20
+    expr_logic  go to state 21
 
 
 state 1
 
-   19 declr_vars: VAR . type COLON ID ass vars SEMICOL
+    8 value: ID .
+    9 string: ID .
 
-    INT     shift, and go to state 6
-    FLOAT   shift, and go to state 7
-    REAL    shift, and go to state 8
-    CHAR    shift, and go to state 9
-    BOOL    shift, and go to state 10
-    STRING  shift, and go to state 11
-
-    type  go to state 12
+    INDEX_OPEN  reduce using rule 9 (string)
+    $default    reduce using rule 8 (value)
 
 
 state 2
 
-    0 $accept: s . $end
+   13 expr: STRLEN . string STRLEN
 
-    $end  shift, and go to state 13
+    ID          shift, and go to state 22
+    LIT_STRING  shift, and go to state 10
+
+    string  go to state 23
 
 
 state 3
 
-    1 s: program .
+   25 expr_logic: NOT . expr
 
-    $default  reduce using rule 1 (s)
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 24
+    expr_math   go to state 20
+    expr_logic  go to state 21
 
 
 state 4
 
-    2 program: dec .
-   18 dec: dec . declr_vars
+   12 expr: PARENT_OPEN . expr PARENT_CLOSE
 
-    VAR  shift, and go to state 1
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
 
-    $default  reduce using rule 2 (program)
-
-    declr_vars  go to state 14
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 25
+    expr_math   go to state 20
+    expr_logic  go to state 21
 
 
 state 5
 
-   17 dec: declr_vars .
+    6 literal: LIT_INT .
 
-    $default  reduce using rule 17 (dec)
+    $default  reduce using rule 6 (literal)
 
 
 state 6
 
-   14 type: INT .
+    5 literal: LIT_FLOAT .
 
-    $default  reduce using rule 14 (type)
+    $default  reduce using rule 5 (literal)
 
 
 state 7
 
-   15 type: FLOAT .
+    4 literal: LIT_REAL .
 
-    $default  reduce using rule 15 (type)
+    $default  reduce using rule 4 (literal)
 
 
 state 8
 
-   16 type: REAL .
+    3 literal: LIT_CHAR .
 
-    $default  reduce using rule 16 (type)
+    $default  reduce using rule 3 (literal)
 
 
 state 9
 
-   12 type: CHAR .
+    2 literal: LIT_BOOL .
 
-    $default  reduce using rule 12 (type)
+    $default  reduce using rule 2 (literal)
 
 
 state 10
 
-   11 type: BOOL .
+   10 string: LIT_STRING .
 
-    $default  reduce using rule 11 (type)
+    $default  reduce using rule 10 (string)
 
 
 state 11
 
-   13 type: STRING .
+   17 expr_math: '-' . expr
 
-    $default  reduce using rule 13 (type)
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 26
+    expr_math   go to state 20
+    expr_logic  go to state 21
 
 
 state 12
 
-   19 declr_vars: VAR type . COLON ID ass vars SEMICOL
+   18 expr_math: '+' . expr
 
-    COLON  shift, and go to state 15
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 27
+    expr_math   go to state 20
+    expr_logic  go to state 21
 
 
 state 13
+
+   19 expr_math: '*' . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 28
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 14
+
+   20 expr_math: '&' . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 29
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 15
+
+    0 $accept: s . $end
+
+    $end  shift, and go to state 30
+
+
+state 16
+
+    7 value: literal .
+
+    $default  reduce using rule 7 (value)
+
+
+state 17
+
+   11 expr: value .
+
+    $default  reduce using rule 11 (expr)
+
+
+state 18
+
+   14 expr: string . INDEX_OPEN expr INDEX_CLOSE
+
+    INDEX_OPEN  shift, and go to state 31
+
+
+state 19
+
+    1 s: expr . SEMICOL
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    AND      shift, and go to state 32
+    EQ       shift, and go to state 33
+    GRTR     shift, and go to state 34
+    GRTR_EQ  shift, and go to state 35
+    LESS     shift, and go to state 36
+    NOT_EQ   shift, and go to state 37
+    OR       shift, and go to state 38
+    DIV      shift, and go to state 39
+    MINUS    shift, and go to state 40
+    PLUS     shift, and go to state 41
+    MUL      shift, and go to state 42
+    SEMICOL  shift, and go to state 43
+
+
+state 20
+
+   15 expr: expr_math .
+
+    $default  reduce using rule 15 (expr)
+
+
+state 21
+
+   16 expr: expr_logic .
+
+    $default  reduce using rule 16 (expr)
+
+
+state 22
+
+    9 string: ID .
+
+    $default  reduce using rule 9 (string)
+
+
+state 23
+
+   13 expr: STRLEN string . STRLEN
+
+    STRLEN  shift, and go to state 44
+
+
+state 24
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   25 expr_logic: NOT expr .
+   26           | expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 25 (expr_logic)
+
+
+state 25
+
+   12 expr: PARENT_OPEN expr . PARENT_CLOSE
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    AND           shift, and go to state 32
+    EQ            shift, and go to state 33
+    GRTR          shift, and go to state 34
+    GRTR_EQ       shift, and go to state 35
+    LESS          shift, and go to state 36
+    NOT_EQ        shift, and go to state 37
+    OR            shift, and go to state 38
+    DIV           shift, and go to state 39
+    MINUS         shift, and go to state 40
+    PLUS          shift, and go to state 41
+    MUL           shift, and go to state 42
+    PARENT_CLOSE  shift, and go to state 45
+
+
+state 26
+
+   17 expr_math: '-' expr .
+   21          | expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 17 (expr_math)
+
+
+state 27
+
+   18 expr_math: '+' expr .
+   21          | expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 18 (expr_math)
+
+
+state 28
+
+   19 expr_math: '*' expr .
+   21          | expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 19 (expr_math)
+
+
+state 29
+
+   20 expr_math: '&' expr .
+   21          | expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 20 (expr_math)
+
+
+state 30
 
     0 $accept: s $end .
 
     $default  accept
 
 
-state 14
-
-   18 dec: dec declr_vars .
-
-    $default  reduce using rule 18 (dec)
-
-
-state 15
-
-   19 declr_vars: VAR type COLON . ID ass vars SEMICOL
-
-    ID  shift, and go to state 16
-
-
-state 16
-
-   19 declr_vars: VAR type COLON ID . ass vars SEMICOL
-
-    ASS  shift, and go to state 17
-
-    $default  reduce using rule 23 (ass)
-
-    ass  go to state 18
-
-
-state 17
-
-   22 ass: ASS . value
-
-    ID          shift, and go to state 19
-    LIT_INT     shift, and go to state 20
-    LIT_FLOAT   shift, and go to state 21
-    LIT_REAL    shift, and go to state 22
-    LIT_CHAR    shift, and go to state 23
-    LIT_BOOL    shift, and go to state 24
-    LIT_STRING  shift, and go to state 25
-
-    literal  go to state 26
-    value    go to state 27
-
-
-state 18
-
-   19 declr_vars: VAR type COLON ID ass . vars SEMICOL
-
-    $default  reduce using rule 21 (vars)
-
-    vars  go to state 28
-
-
-state 19
-
-   10 value: ID .
-
-    $default  reduce using rule 10 (value)
-
-
-state 20
-
-    7 literal: LIT_INT .
-
-    $default  reduce using rule 7 (literal)
-
-
-state 21
-
-    6 literal: LIT_FLOAT .
-
-    $default  reduce using rule 6 (literal)
-
-
-state 22
-
-    5 literal: LIT_REAL .
-
-    $default  reduce using rule 5 (literal)
-
-
-state 23
-
-    4 literal: LIT_CHAR .
-
-    $default  reduce using rule 4 (literal)
-
-
-state 24
-
-    3 literal: LIT_BOOL .
-
-    $default  reduce using rule 3 (literal)
-
-
-state 25
-
-    8 literal: LIT_STRING .
-
-    $default  reduce using rule 8 (literal)
-
-
-state 26
-
-    9 value: literal .
-
-    $default  reduce using rule 9 (value)
-
-
-state 27
-
-   22 ass: ASS value .
-
-    $default  reduce using rule 22 (ass)
-
-
-state 28
-
-   19 declr_vars: VAR type COLON ID ass vars . SEMICOL
-   20 vars: vars . COMMA ID ass
-
-    SEMICOL  shift, and go to state 29
-    COMMA    shift, and go to state 30
-
-
-state 29
-
-   19 declr_vars: VAR type COLON ID ass vars SEMICOL .
-
-    $default  reduce using rule 19 (declr_vars)
-
-
-state 30
-
-   20 vars: vars COMMA . ID ass
-
-    ID  shift, and go to state 31
-
-
 state 31
 
-   20 vars: vars COMMA ID . ass
+   14 expr: string INDEX_OPEN . expr INDEX_CLOSE
 
-    ASS  shift, and go to state 17
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
 
-    $default  reduce using rule 23 (ass)
-
-    ass  go to state 32
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 46
+    expr_math   go to state 20
+    expr_logic  go to state 21
 
 
 state 32
 
-   20 vars: vars COMMA ID ass .
+   26 expr_logic: expr AND . expr
+   30           | expr AND . expr
+   31           | expr AND . expr
+   32           | expr AND . expr
 
-    $default  reduce using rule 20 (vars)
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 47
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 33
+
+   28 expr_logic: expr EQ . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 48
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 34
+
+   33 expr_logic: expr GRTR . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 49
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 35
+
+   34 expr_logic: expr GRTR_EQ . expr
+   36           | expr GRTR_EQ . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 50
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 36
+
+   35 expr_logic: expr LESS . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 51
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 37
+
+   29 expr_logic: expr NOT_EQ . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 52
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 38
+
+   27 expr_logic: expr OR . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 53
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 39
+
+   24 expr_math: expr DIV . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 54
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 40
+
+   22 expr_math: expr MINUS . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 55
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 41
+
+   21 expr_math: expr PLUS . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 56
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 42
+
+   23 expr_math: expr MUL . expr
+
+    ID           shift, and go to state 1
+    STRLEN       shift, and go to state 2
+    NOT          shift, and go to state 3
+    PARENT_OPEN  shift, and go to state 4
+    LIT_INT      shift, and go to state 5
+    LIT_FLOAT    shift, and go to state 6
+    LIT_REAL     shift, and go to state 7
+    LIT_CHAR     shift, and go to state 8
+    LIT_BOOL     shift, and go to state 9
+    LIT_STRING   shift, and go to state 10
+    '-'          shift, and go to state 11
+    '+'          shift, and go to state 12
+    '*'          shift, and go to state 13
+    '&'          shift, and go to state 14
+
+    literal     go to state 16
+    value       go to state 17
+    string      go to state 18
+    expr        go to state 57
+    expr_math   go to state 20
+    expr_logic  go to state 21
+
+
+state 43
+
+    1 s: expr SEMICOL .
+
+    $default  reduce using rule 1 (s)
+
+
+state 44
+
+   13 expr: STRLEN string STRLEN .
+
+    $default  reduce using rule 13 (expr)
+
+
+state 45
+
+   12 expr: PARENT_OPEN expr PARENT_CLOSE .
+
+    $default  reduce using rule 12 (expr)
+
+
+state 46
+
+   14 expr: string INDEX_OPEN expr . INDEX_CLOSE
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    AND          shift, and go to state 32
+    EQ           shift, and go to state 33
+    GRTR         shift, and go to state 34
+    GRTR_EQ      shift, and go to state 35
+    LESS         shift, and go to state 36
+    NOT_EQ       shift, and go to state 37
+    OR           shift, and go to state 38
+    DIV          shift, and go to state 39
+    MINUS        shift, and go to state 40
+    PLUS         shift, and go to state 41
+    MUL          shift, and go to state 42
+    INDEX_CLOSE  shift, and go to state 58
+
+
+state 47
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   26           | expr AND expr .
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   30           | expr AND expr .
+   31           | expr . AND expr
+   31           | expr AND expr .
+   32           | expr . AND expr
+   32           | expr AND expr .
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    EQ       shift, and go to state 33
+    GRTR     shift, and go to state 34
+    GRTR_EQ  shift, and go to state 35
+    LESS     shift, and go to state 36
+    NOT_EQ   shift, and go to state 37
+    DIV      shift, and go to state 39
+    MINUS    shift, and go to state 40
+    PLUS     shift, and go to state 41
+    MUL      shift, and go to state 42
+
+    AND           reduce using rule 26 (expr_logic)
+    AND           [reduce using rule 30 (expr_logic)]
+    AND           [reduce using rule 31 (expr_logic)]
+    AND           [reduce using rule 32 (expr_logic)]
+    OR            reduce using rule 26 (expr_logic)
+    OR            [reduce using rule 30 (expr_logic)]
+    OR            [reduce using rule 31 (expr_logic)]
+    OR            [reduce using rule 32 (expr_logic)]
+    SEMICOL       reduce using rule 26 (expr_logic)
+    SEMICOL       [reduce using rule 30 (expr_logic)]
+    SEMICOL       [reduce using rule 31 (expr_logic)]
+    SEMICOL       [reduce using rule 32 (expr_logic)]
+    PARENT_CLOSE  reduce using rule 26 (expr_logic)
+    PARENT_CLOSE  [reduce using rule 30 (expr_logic)]
+    PARENT_CLOSE  [reduce using rule 31 (expr_logic)]
+    PARENT_CLOSE  [reduce using rule 32 (expr_logic)]
+    INDEX_CLOSE   reduce using rule 26 (expr_logic)
+    INDEX_CLOSE   [reduce using rule 30 (expr_logic)]
+    INDEX_CLOSE   [reduce using rule 31 (expr_logic)]
+    INDEX_CLOSE   [reduce using rule 32 (expr_logic)]
+    $default      reduce using rule 26 (expr_logic)
+
+
+state 48
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   28           | expr EQ expr .
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    GRTR     shift, and go to state 34
+    GRTR_EQ  shift, and go to state 35
+    LESS     shift, and go to state 36
+    DIV      shift, and go to state 39
+    MINUS    shift, and go to state 40
+    PLUS     shift, and go to state 41
+    MUL      shift, and go to state 42
+
+    EQ      error (nonassociative)
+    NOT_EQ  error (nonassociative)
+
+    $default  reduce using rule 28 (expr_logic)
+
+
+state 49
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   33           | expr GRTR expr .
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    DIV    shift, and go to state 39
+    MINUS  shift, and go to state 40
+    PLUS   shift, and go to state 41
+    MUL    shift, and go to state 42
+
+    GRTR     error (nonassociative)
+    GRTR_EQ  error (nonassociative)
+    LESS     error (nonassociative)
+
+    $default  reduce using rule 33 (expr_logic)
+
+
+state 50
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   34           | expr GRTR_EQ expr .
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+   36           | expr GRTR_EQ expr .
+
+    DIV    shift, and go to state 39
+    MINUS  shift, and go to state 40
+    PLUS   shift, and go to state 41
+    MUL    shift, and go to state 42
+
+    GRTR     error (nonassociative)
+    GRTR_EQ  error (nonassociative)
+    LESS     error (nonassociative)
+
+    AND           reduce using rule 34 (expr_logic)
+    AND           [reduce using rule 36 (expr_logic)]
+    EQ            reduce using rule 34 (expr_logic)
+    EQ            [reduce using rule 36 (expr_logic)]
+    GRTR          reduce using rule 36 (expr_logic)
+    GRTR_EQ       reduce using rule 36 (expr_logic)
+    LESS          reduce using rule 36 (expr_logic)
+    NOT_EQ        reduce using rule 34 (expr_logic)
+    NOT_EQ        [reduce using rule 36 (expr_logic)]
+    OR            reduce using rule 34 (expr_logic)
+    OR            [reduce using rule 36 (expr_logic)]
+    SEMICOL       reduce using rule 34 (expr_logic)
+    SEMICOL       [reduce using rule 36 (expr_logic)]
+    PARENT_CLOSE  reduce using rule 34 (expr_logic)
+    PARENT_CLOSE  [reduce using rule 36 (expr_logic)]
+    INDEX_CLOSE   reduce using rule 34 (expr_logic)
+    INDEX_CLOSE   [reduce using rule 36 (expr_logic)]
+    $default      reduce using rule 34 (expr_logic)
+
+
+state 51
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   35           | expr LESS expr .
+   36           | expr . GRTR_EQ expr
+
+    DIV    shift, and go to state 39
+    MINUS  shift, and go to state 40
+    PLUS   shift, and go to state 41
+    MUL    shift, and go to state 42
+
+    GRTR     error (nonassociative)
+    GRTR_EQ  error (nonassociative)
+    LESS     error (nonassociative)
+
+    $default  reduce using rule 35 (expr_logic)
+
+
+state 52
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   29           | expr NOT_EQ expr .
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    GRTR     shift, and go to state 34
+    GRTR_EQ  shift, and go to state 35
+    LESS     shift, and go to state 36
+    DIV      shift, and go to state 39
+    MINUS    shift, and go to state 40
+    PLUS     shift, and go to state 41
+    MUL      shift, and go to state 42
+
+    EQ      error (nonassociative)
+    NOT_EQ  error (nonassociative)
+
+    $default  reduce using rule 29 (expr_logic)
+
+
+state 53
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   27           | expr OR expr .
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    AND      shift, and go to state 32
+    EQ       shift, and go to state 33
+    GRTR     shift, and go to state 34
+    GRTR_EQ  shift, and go to state 35
+    LESS     shift, and go to state 36
+    NOT_EQ   shift, and go to state 37
+    DIV      shift, and go to state 39
+    MINUS    shift, and go to state 40
+    PLUS     shift, and go to state 41
+    MUL      shift, and go to state 42
+
+    $default  reduce using rule 27 (expr_logic)
+
+
+state 54
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   24          | expr DIV expr .
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 24 (expr_math)
+
+
+state 55
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   22          | expr MINUS expr .
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    DIV  shift, and go to state 39
+    MUL  shift, and go to state 42
+
+    $default  reduce using rule 22 (expr_math)
+
+
+state 56
+
+   21 expr_math: expr . PLUS expr
+   21          | expr PLUS expr .
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    DIV  shift, and go to state 39
+    MUL  shift, and go to state 42
+
+    $default  reduce using rule 21 (expr_math)
+
+
+state 57
+
+   21 expr_math: expr . PLUS expr
+   22          | expr . MINUS expr
+   23          | expr . MUL expr
+   23          | expr MUL expr .
+   24          | expr . DIV expr
+   26 expr_logic: expr . AND expr
+   27           | expr . OR expr
+   28           | expr . EQ expr
+   29           | expr . NOT_EQ expr
+   30           | expr . AND expr
+   31           | expr . AND expr
+   32           | expr . AND expr
+   33           | expr . GRTR expr
+   34           | expr . GRTR_EQ expr
+   35           | expr . LESS expr
+   36           | expr . GRTR_EQ expr
+
+    $default  reduce using rule 23 (expr_math)
+
+
+state 58
+
+   14 expr: string INDEX_OPEN expr INDEX_CLOSE .
+
+    $default  reduce using rule 14 (expr)
