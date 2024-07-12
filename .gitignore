@@ -1,7 +1,7 @@
 *.exe
+*.vcg
 *.c
 *.h
 *.output
 .DS_Store
 .TODO
-*.vcg
