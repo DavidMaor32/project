@@ -79,15 +79,15 @@ true|false          {  col+= yyleng;yylval._bool = (strcmp("true",yytext) == 0 ?
 {string}            {  col+= yyleng;return LIT_STRING; }
 {ID}                {  col+= yyleng;return ID; }
  /*others*/
-";"         { return SEMICOL; }
-","         { return COMMA; }
-"|"         { return STRLEN; }
-"{"         { return BLOCK_OPEN; }
-"}"         { return BLOCK_CLOSE; }
-"("         { return PARENT_OPEN; }
-")"         { return PARENT_CLOSE; }
-"["         { return INDEX_OPEN; }
-"]"         { return INDEX_CLOSE; }
-":"         { return COLON; }
+";"         { col+= yyleng;return SEMICOL; }
+","         { col+= yyleng;return COMMA; }
+"|"         { col+= yyleng;return STRLEN; }
+"{"         { col+= yyleng;return BLOCK_OPEN; }
+"}"         { col+= yyleng;return BLOCK_CLOSE; }
+"("         { col+= yyleng;return PARENT_OPEN; }
+")"         { col+= yyleng;return PARENT_CLOSE; }
+"["         { col+= yyleng;return INDEX_OPEN; }
+"]"         { col+= yyleng;return INDEX_CLOSE; }
+":"         { col+= yyleng;return COLON; }
 .                   {  yyerror("UNRECOGNIZED TOKEN ");col+= yyleng;return yytext[0]; }
 %%
