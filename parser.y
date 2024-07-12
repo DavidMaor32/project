@@ -3,6 +3,7 @@
 int yylex();
 int yyerror(const char* s);
 int yylineno, col;
+    char* yytext;
 typedef enum {
     false, 
     true
@@ -61,8 +62,8 @@ typedef struct {
 %right ASS
 %left OR
 %left AND
-%left EQ NOT_EQ
-%left LESS LESS_EQ GRTR GRTR_EQ
+%nonassoc EQ NOT_EQ
+%nonassoc LESS LESS_EQ GRTR GRTR_EQ
 %left PLUS MINUS
 %left MUL DIV
 %right NOT
@@ -81,8 +82,7 @@ literal: LIT_BOOL
     | LIT_INT 
     | LIT_STRING ;
 
-value: literal 
-    | ID ;
+value: literal | ID ;
 
 type: BOOL 
     | CHAR 
@@ -96,24 +96,37 @@ type: BOOL
     | P_FLOAT 
     | P_INT ; */
 
-dec: dec declr_vars | declr_vars;
-declr_vars: VAR type COLON ID ass vars SEMICOL ;
+dec: declr_vars | dec declr_vars ;
+declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); }
 vars: vars COMMA ID ass | ;
 ass: ASS value | ;
-/* var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; */
-
 /* 
+expr: ID
+    | literal { $$ = $1}
+    | PARENT_OPEN expr PARENT_CLOSE
+    | 
+
+var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; 
+
+
 stmt_if: IF PARENT_OPEN expr PARENT_CLOSE stmnt
-    | IF PARENT_OPEN expr PARENT_CLOSE stmnt ELSE stmt */
+    | IF PARENT_OPEN expr PARENT_CLOSE stmnt ELSE stmt 
+
+*/
 
 %%
 #include "lex.yy.c"
+#ifdef YYDEBUG
+  int yydebug = 1;
+#endif
 int main(){
+    
     return yyparse();
 }
-
-
 int yyerror(const char* s){
     fprintf(stderr,"%s in <%d,%d> \"%s\"\n", s, yylineno,col, yytext);
-    return 0;
+    exit(1);
+    return 1;
 }
+
+
