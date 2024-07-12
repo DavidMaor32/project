@@ -1,4 +1,4 @@
-int:xy, t<-5;
+var int:xy <- awd, t<-5, r,a5<-3;
 /*
 sdfds
 sdfdssdf
@@ -6,4 +6,4 @@ sdfds
 
 df
 */
-bool:w<-70;
+var bool:w<-70;

@@ -2,6 +2,7 @@
 #include <stdio.h>
 int yylex();
 int yyerror(const char* s);
+int yylineno, col;
 typedef enum {
     false, 
     true
@@ -10,7 +11,10 @@ typedef struct {
     char*   str;
     unsigned int   size;
 }string;
-
+typedef struct {
+    char* name;
+    yylval val;
+}yystype;
 %}
 %union{
     int     _int;
@@ -26,15 +30,20 @@ typedef struct {
     void*   _nullptr;
 };
 
-%token REF DEREF
-%token ID  STRLEN VAR
-%token ARGS PUBLIC PRIVATE STATIC RETURN MAIN ASS
-%token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR  
-%token STRING   VOID 
-%token LIT_STRING 
-%token P_INT P_FLOAT P_REAL P_CHAR
-%token WHILE DO FOR
 %token IF ELSE
+%token WHILE DO FOR
+%token ID STRLEN VAR ASS
+%token PUBLIC PRIVATE ARGS STATIC MAIN RETURN VOID
+
+%token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR  
+%token DIV MINUS PLUS MUL
+%token DEREF REF
+
+%token COLON SEMICOL COMMA 
+%token BLOCK_OPEN BLOCK_CLOSE 
+%token PARENT_OPEN PARENT_CLOSE 
+%token INDEX_OPEN INDEX_CLOSE
+
 
 %token  <_int>      LIT_INT     INT
 %token  <_float>    LIT_FLOAT   FLOAT
@@ -42,21 +51,28 @@ typedef struct {
 %token  <_char>     LIT_CHAR    CHAR
 %token  <_bool>     LIT_BOOL    BOOL
 %token  <_nullptr>  NULLPTR
+%token  <p_int>     P_INT
+%token  <p_float>   P_FLOAT
+%token  <p_real>    P_REAL
+%token  <p_char>    P_CHAR
+%token  <p_char>    LIT_STRING  STRING
 
-%left ','
+%left COMMA
 %right ASS
 %left OR
 %left AND
 %left EQ NOT_EQ
 %left LESS LESS_EQ GRTR GRTR_EQ
-%left ADD SUB
+%left PLUS MINUS
 %left MUL DIV
 %right NOT
 %right DEREF
 %right REF
-%right '['
+%right INDEX_OPEN
 %%
-s: declr_vars s | { printf("parsed successfully!\n");return 0; }
+s: program { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
+
+program: dec;
 
 literal: LIT_BOOL 
     | LIT_CHAR 
@@ -80,20 +96,15 @@ type: BOOL
     | P_FLOAT 
     | P_INT ; */
 
-declr_vars: type ':' ID vars | type ':' ID;
-vars: ',' ID ass vars | ;
+dec: dec declr_vars | declr_vars;
+declr_vars: VAR type COLON ID ass vars SEMICOL ;
+vars: vars COMMA ID ass | ;
 ass: ASS value | ;
+/* var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; */
 
-
-/* expr: arith;
-
-arith: 
-    |ADD expr { $$ = $1; }
-    |SUB expr {$$ = -1 * $1; }
-
-comp:;
-logic:expr OR expr;
-mem_access:; */
+/* 
+stmt_if: IF PARENT_OPEN expr PARENT_CLOSE stmnt
+    | IF PARENT_OPEN expr PARENT_CLOSE stmnt ELSE stmt */
 
 %%
 #include "lex.yy.c"
@@ -103,6 +114,6 @@ int main(){
 
 
 int yyerror(const char* s){
-    fprintf(stderr,"Syntax error in <%d,%d> \"%s\"\n", yylineno,col, yytext);
+    fprintf(stderr,"%s in <%d,%d> \"%s\"\n", s, yylineno,col, yytext);
     return 0;
 }

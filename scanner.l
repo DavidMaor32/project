@@ -20,26 +20,13 @@ ID  {LETTER}({CHARACHTER}|_)*
 %%
 [ \t\s\r]           {col++;}
 [ \n]               { yylineno++; col = 1; }
-"/*"                {
-                        char c;
-                        while (1){
-                            do{
-                                c = input();
-                                col++;
-                                if ( c == '\n')
-                                    yylineno++;
-                            }while ( c != '*' && c != EOF );    /* eat up text of comment */
-                            if ( c == '*' ){
-                                while ( (c = input()) == '*' );
-                                if ( c == '/' )
-                                    break;    /* found the end */
-                            }
-                            if ( c == EOF ){
-                                yyerror( "EOF in comment");
-                                break;
-                                }
-                            }
+"/*"(.|\n)*"*/"     { 
+                        for(int i =0;i<yyleng;i++){
+                            if(yytext[i] == '\n')
+                                yylineno++;
                         }
+                    }
+"/*"                {  yyerror("missing closing comment!"); }          
  /*KEYWORDS*/
 bool                {  col+= yyleng;return BOOL; }
 char                {  col+= yyleng;return CHAR; }
@@ -52,7 +39,7 @@ null                {  col+= yyleng;return NULLPTR; }
 "float*"            {  col+= yyleng;return P_FLOAT; }
 "double*"           {  col+= yyleng;return P_REAL; }
 "char*"             {  col+= yyleng;return P_CHAR; }
-var                 {  col+= yyleng;return VAR; }
+"var"                 {  col+= yyleng;return VAR; }
 if                  {  col+= yyleng;return IF; }
 else                {  col+= yyleng;return ELSE; }
 while               {  col+= yyleng;return WHILE; }
@@ -68,17 +55,17 @@ main                {  col+= yyleng;return MAIN; }
  /*Operators*/
 "&&"                {  col+= yyleng;return AND; }
 "=="                {  col+= yyleng;return EQ; }
+"!="                {  col+= yyleng;return NOT_EQ; }
 "<-"                {  col+= yyleng;return ASS; }
 ">="                {  col+= yyleng;return GRTR_EQ; }
 "<="                {  col+= yyleng;return LESS_EQ; }
 ">"                 {  col+= yyleng;return GRTR; }
 "<"                 {  col+= yyleng;return LESS; }
 "!"                 {  col+= yyleng;return NOT; }
-"!="                {  col+= yyleng;return NOT_EQ; }
 "||"                {  col+= yyleng;return OR; }
 "/"                 {  col+= yyleng;return DIV; }
-"-"                 {  col+= yyleng;return SUB; }
-"+"                 {  col+= yyleng;return ADD; }
+"-"                 {  col+= yyleng;return MINUS; }
+"+"                 {  col+= yyleng;return PLUS; }
 {ID}\*              {  col+= yyleng;return MUL; }
 "&"{ID}             {  col+= yyleng;return REF; }
 \*{ID}              {  col+= yyleng;return DEREF; }
@@ -92,5 +79,15 @@ true|false          {  col+= yyleng;yylval._bool = (strcmp("true",yytext) == 0 ?
 {string}            {  col+= yyleng;return LIT_STRING; }
 {ID}                {  col+= yyleng;return ID; }
  /*others*/
+";"         { return SEMICOL; }
+","         { return COMMA; }
+"|"         { return STRLEN; }
+"{"         { return BLOCK_OPEN; }
+"}"         { return BLOCK_CLOSE; }
+"("         { return PARENT_OPEN; }
+")"         { return PARENT_CLOSE; }
+"["         { return INDEX_OPEN; }
+"]"         { return INDEX_CLOSE; }
+":"         { return COLON; }
 .                   {  yyerror("UNRECOGNIZED TOKEN ");col+= yyleng;return yytext[0]; }
 %%

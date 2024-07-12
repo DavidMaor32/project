@@ -1,15 +1,18 @@
 Terminals which are not used
 
-   REF
-   DEREF
+   IF
+   ELSE
+   WHILE
+   DO
+   FOR
    STRLEN
-   VAR
-   ARGS
    PUBLIC
    PRIVATE
+   ARGS
    STATIC
-   RETURN
    MAIN
+   RETURN
+   VOID
    AND
    EQ
    GRTR
@@ -19,33 +22,32 @@ Terminals which are not used
    NOT
    NOT_EQ
    OR
-   VOID
+   DIV
+   MINUS
+   PLUS
+   MUL
+   DEREF
+   REF
+   BLOCK_OPEN
+   BLOCK_CLOSE
+   PARENT_OPEN
+   PARENT_CLOSE
+   INDEX_OPEN
+   INDEX_CLOSE
+   NULLPTR
    P_INT
    P_FLOAT
    P_REAL
    P_CHAR
-   WHILE
-   DO
-   FOR
-   IF
-   ELSE
-   NULLPTR
-   SUB
-   ADD
-   DIV
-   MUL
-   '['
-
-
-State 13 conflicts: 7 reduce/reduce
 
 
 Grammar
 
     0 $accept: s $end
 
-    1 s: declr_vars s
-    2  | /* empty */
+    1 s: program
+
+    2 program: declr_vars
 
     3 literal: LIT_BOOL
     4        | LIT_CHAR
@@ -64,351 +66,355 @@ Grammar
    15     | FLOAT
    16     | REAL
 
-   17 declr_vars: type ':' ID vars
-   18           | type ':' ID
+   17 declr_vars: VAR type COLON ID ass vars SEMICOL
 
-   19 vars: ',' ID ass vars
-   20     | /* empty */
+   18 vars: COMMA ID ass vars
+   19     | /* empty */
 
-   21 ass: ASS value
-   22    | /* empty */
+   20 ass: ASS value
+   21    | /* empty */
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-',' (44) 19
-':' (58) 17 18
-'[' (91)
 error (256)
-REF (258)
-DEREF (259)
-ID (260) 10 17 18 19
-STRLEN (261)
-VAR (262)
-ARGS (263)
-PUBLIC (264)
-PRIVATE (265)
-STATIC (266)
-RETURN (267)
-MAIN (268)
-ASS (269) 21
-AND (270)
-EQ (271)
-GRTR (272)
-GRTR_EQ (273)
-LESS (274)
-LESS_EQ (275)
-NOT (276)
-NOT_EQ (277)
-OR (278)
-STRING (279) 13
-VOID (280)
-LIT_STRING (281) 8
-P_INT (282)
-P_FLOAT (283)
-P_REAL (284)
-P_CHAR (285)
-WHILE (286)
-DO (287)
-FOR (288)
-IF (289)
-ELSE (290)
-LIT_INT (291) 7
-INT (292) 14
-LIT_FLOAT (293) 6
-FLOAT (294) 15
-LIT_REAL (295) 5
-REAL (296) 16
-LIT_CHAR (297) 4
-CHAR (298) 12
-LIT_BOOL (299) 3
-BOOL (300) 11
-NULLPTR (301)
-SUB (302)
-ADD (303)
-DIV (304)
-MUL (305)
+IF (258)
+ELSE (259)
+WHILE (260)
+DO (261)
+FOR (262)
+ID (263) 10 17 18
+STRLEN (264)
+VAR (265) 17
+ASS (266) 20
+PUBLIC (267)
+PRIVATE (268)
+ARGS (269)
+STATIC (270)
+MAIN (271)
+RETURN (272)
+VOID (273)
+AND (274)
+EQ (275)
+GRTR (276)
+GRTR_EQ (277)
+LESS (278)
+LESS_EQ (279)
+NOT (280)
+NOT_EQ (281)
+OR (282)
+DIV (283)
+MINUS (284)
+PLUS (285)
+MUL (286)
+DEREF (287)
+REF (288)
+COLON (289) 17
+SEMICOL (290) 17
+COMMA (291) 18
+BLOCK_OPEN (292)
+BLOCK_CLOSE (293)
+PARENT_OPEN (294)
+PARENT_CLOSE (295)
+INDEX_OPEN (296)
+INDEX_CLOSE (297)
+LIT_INT (298) 7
+INT (299) 14
+LIT_FLOAT (300) 6
+FLOAT (301) 15
+LIT_REAL (302) 5
+REAL (303) 16
+LIT_CHAR (304) 4
+CHAR (305) 12
+LIT_BOOL (306) 3
+BOOL (307) 11
+NULLPTR (308)
+P_INT (309)
+P_FLOAT (310)
+P_REAL (311)
+P_CHAR (312)
+LIT_STRING (313) 8
+STRING (314) 13
 
 
 Nonterminals, with rules where they appear
 
-$accept (54)
+$accept (60)
     on left: 0
-s (55)
-    on left: 1 2, on right: 0 1
-literal (56)
+s (61)
+    on left: 1, on right: 0
+program (62)
+    on left: 2, on right: 1
+literal (63)
     on left: 3 4 5 6 7 8, on right: 9
-value (57)
-    on left: 9 10, on right: 21
-type (58)
-    on left: 11 12 13 14 15 16, on right: 17 18
-declr_vars (59)
-    on left: 17 18, on right: 1
-vars (60)
-    on left: 19 20, on right: 17 19
-ass (61)
-    on left: 21 22, on right: 19
+value (64)
+    on left: 9 10, on right: 20
+type (65)
+    on left: 11 12 13 14 15 16, on right: 17
+declr_vars (66)
+    on left: 17, on right: 2
+vars (67)
+    on left: 18 19, on right: 17 18
+ass (68)
+    on left: 20 21, on right: 17 18
 
 
 state 0
 
     0 $accept: . s $end
 
-    STRING  shift, and go to state 1
-    INT     shift, and go to state 2
-    FLOAT   shift, and go to state 3
-    REAL    shift, and go to state 4
-    CHAR    shift, and go to state 5
-    BOOL    shift, and go to state 6
+    VAR  shift, and go to state 1
 
-    $default  reduce using rule 2 (s)
-
-    s           go to state 7
-    type        go to state 8
-    declr_vars  go to state 9
+    s           go to state 2
+    program     go to state 3
+    declr_vars  go to state 4
 
 
 state 1
 
-   13 type: STRING .
+   17 declr_vars: VAR . type COLON ID ass vars SEMICOL
 
-    $default  reduce using rule 13 (type)
+    INT     shift, and go to state 5
+    FLOAT   shift, and go to state 6
+    REAL    shift, and go to state 7
+    CHAR    shift, and go to state 8
+    BOOL    shift, and go to state 9
+    STRING  shift, and go to state 10
+
+    type  go to state 11
 
 
 state 2
+
+    0 $accept: s . $end
+
+    $end  shift, and go to state 12
+
+
+state 3
+
+    1 s: program .
+
+    $default  reduce using rule 1 (s)
+
+
+state 4
+
+    2 program: declr_vars .
+
+    $default  reduce using rule 2 (program)
+
+
+state 5
 
    14 type: INT .
 
     $default  reduce using rule 14 (type)
 
 
-state 3
+state 6
 
    15 type: FLOAT .
 
     $default  reduce using rule 15 (type)
 
 
-state 4
+state 7
 
    16 type: REAL .
 
     $default  reduce using rule 16 (type)
 
 
-state 5
+state 8
 
    12 type: CHAR .
 
     $default  reduce using rule 12 (type)
 
 
-state 6
+state 9
 
    11 type: BOOL .
 
     $default  reduce using rule 11 (type)
 
 
-state 7
-
-    0 $accept: s . $end
-
-    $end  shift, and go to state 10
-
-
-state 8
-
-   17 declr_vars: type . ':' ID vars
-   18           | type . ':' ID
-
-    ':'  shift, and go to state 11
-
-
-state 9
-
-    1 s: declr_vars . s
-
-    STRING  shift, and go to state 1
-    INT     shift, and go to state 2
-    FLOAT   shift, and go to state 3
-    REAL    shift, and go to state 4
-    CHAR    shift, and go to state 5
-    BOOL    shift, and go to state 6
-
-    $default  reduce using rule 2 (s)
-
-    s           go to state 12
-    type        go to state 8
-    declr_vars  go to state 9
-
-
 state 10
+
+   13 type: STRING .
+
+    $default  reduce using rule 13 (type)
+
+
+state 11
+
+   17 declr_vars: VAR type . COLON ID ass vars SEMICOL
+
+    COLON  shift, and go to state 13
+
+
+state 12
 
     0 $accept: s $end .
 
     $default  accept
 
 
-state 11
-
-   17 declr_vars: type ':' . ID vars
-   18           | type ':' . ID
-
-    ID  shift, and go to state 13
-
-
-state 12
-
-    1 s: declr_vars s .
-
-    $default  reduce using rule 1 (s)
-
-
 state 13
 
-   17 declr_vars: type ':' ID . vars
-   18           | type ':' ID .
+   17 declr_vars: VAR type COLON . ID ass vars SEMICOL
 
-    ','  shift, and go to state 14
-
-    $end      reduce using rule 18 (declr_vars)
-    $end      [reduce using rule 20 (vars)]
-    STRING    reduce using rule 18 (declr_vars)
-    STRING    [reduce using rule 20 (vars)]
-    INT       reduce using rule 18 (declr_vars)
-    INT       [reduce using rule 20 (vars)]
-    FLOAT     reduce using rule 18 (declr_vars)
-    FLOAT     [reduce using rule 20 (vars)]
-    REAL      reduce using rule 18 (declr_vars)
-    REAL      [reduce using rule 20 (vars)]
-    CHAR      reduce using rule 18 (declr_vars)
-    CHAR      [reduce using rule 20 (vars)]
-    BOOL      reduce using rule 18 (declr_vars)
-    BOOL      [reduce using rule 20 (vars)]
-    $default  reduce using rule 18 (declr_vars)
-
-    vars  go to state 15
+    ID  shift, and go to state 14
 
 
 state 14
 
-   19 vars: ',' . ID ass vars
+   17 declr_vars: VAR type COLON ID . ass vars SEMICOL
 
-    ID  shift, and go to state 16
+    ASS  shift, and go to state 15
+
+    $default  reduce using rule 21 (ass)
+
+    ass  go to state 16
 
 
 state 15
 
-   17 declr_vars: type ':' ID vars .
+   20 ass: ASS . value
 
-    $default  reduce using rule 17 (declr_vars)
+    ID          shift, and go to state 17
+    LIT_INT     shift, and go to state 18
+    LIT_FLOAT   shift, and go to state 19
+    LIT_REAL    shift, and go to state 20
+    LIT_CHAR    shift, and go to state 21
+    LIT_BOOL    shift, and go to state 22
+    LIT_STRING  shift, and go to state 23
+
+    literal  go to state 24
+    value    go to state 25
 
 
 state 16
 
-   19 vars: ',' ID . ass vars
+   17 declr_vars: VAR type COLON ID ass . vars SEMICOL
 
-    ASS  shift, and go to state 17
+    COMMA  shift, and go to state 26
 
-    $default  reduce using rule 22 (ass)
+    $default  reduce using rule 19 (vars)
 
-    ass  go to state 18
+    vars  go to state 27
 
 
 state 17
-
-   21 ass: ASS . value
-
-    ID          shift, and go to state 19
-    LIT_STRING  shift, and go to state 20
-    LIT_INT     shift, and go to state 21
-    LIT_FLOAT   shift, and go to state 22
-    LIT_REAL    shift, and go to state 23
-    LIT_CHAR    shift, and go to state 24
-    LIT_BOOL    shift, and go to state 25
-
-    literal  go to state 26
-    value    go to state 27
-
-
-state 18
-
-   19 vars: ',' ID ass . vars
-
-    ','  shift, and go to state 14
-
-    $default  reduce using rule 20 (vars)
-
-    vars  go to state 28
-
-
-state 19
 
    10 value: ID .
 
     $default  reduce using rule 10 (value)
 
 
-state 20
-
-    8 literal: LIT_STRING .
-
-    $default  reduce using rule 8 (literal)
-
-
-state 21
+state 18
 
     7 literal: LIT_INT .
 
     $default  reduce using rule 7 (literal)
 
 
-state 22
+state 19
 
     6 literal: LIT_FLOAT .
 
     $default  reduce using rule 6 (literal)
 
 
-state 23
+state 20
 
     5 literal: LIT_REAL .
 
     $default  reduce using rule 5 (literal)
 
 
-state 24
+state 21
 
     4 literal: LIT_CHAR .
 
     $default  reduce using rule 4 (literal)
 
 
-state 25
+state 22
 
     3 literal: LIT_BOOL .
 
     $default  reduce using rule 3 (literal)
 
 
-state 26
+state 23
+
+    8 literal: LIT_STRING .
+
+    $default  reduce using rule 8 (literal)
+
+
+state 24
 
     9 value: literal .
 
     $default  reduce using rule 9 (value)
 
 
+state 25
+
+   20 ass: ASS value .
+
+    $default  reduce using rule 20 (ass)
+
+
+state 26
+
+   18 vars: COMMA . ID ass vars
+
+    ID  shift, and go to state 28
+
+
 state 27
 
-   21 ass: ASS value .
+   17 declr_vars: VAR type COLON ID ass vars . SEMICOL
 
-    $default  reduce using rule 21 (ass)
+    SEMICOL  shift, and go to state 29
 
 
 state 28
 
-   19 vars: ',' ID ass vars .
+   18 vars: COMMA ID . ass vars
+
+    ASS  shift, and go to state 15
+
+    $default  reduce using rule 21 (ass)
+
+    ass  go to state 30
+
+
+state 29
+
+   17 declr_vars: VAR type COLON ID ass vars SEMICOL .
+
+    $default  reduce using rule 17 (declr_vars)
+
+
+state 30
+
+   18 vars: COMMA ID ass . vars
+
+    COMMA  shift, and go to state 26
 
     $default  reduce using rule 19 (vars)
+
+    vars  go to state 31
+
+
+state 31
+
+   18 vars: COMMA ID ass vars .
+
+    $default  reduce using rule 18 (vars)
