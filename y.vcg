@@ -32,6 +32,13 @@ graph: {
 	edge: {
 		sourcename:	"0"
 		targetname:	"4"
+		label:	"dec"
+		color:	green
+		textcolor:	black
+	}
+	edge: {
+		sourcename:	"0"
+		targetname:	"5"
 		label:	"declr_vars"
 		color:	green
 		textcolor:	black
@@ -42,49 +49,49 @@ graph: {
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"5"
+		targetname:	"6"
 		label:	"INT"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"6"
+		targetname:	"7"
 		label:	"FLOAT"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"7"
+		targetname:	"8"
 		label:	"REAL"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"8"
+		targetname:	"9"
 		label:	"CHAR"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"9"
+		targetname:	"10"
 		label:	"BOOL"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"10"
+		targetname:	"11"
 		label:	"STRING"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"1"
-		targetname:	"11"
+		targetname:	"12"
 		label:	"type"
 		color:	green
 		textcolor:	black
@@ -95,7 +102,7 @@ graph: {
 	}
 	edge: {
 		sourcename:	"2"
-		targetname:	"12"
+		targetname:	"13"
 		label:	"$end"
 		color:	blue
 		textcolor:	black
@@ -106,235 +113,228 @@ graph: {
 	}
 	node: {
 		title:	"4"
-		label:	"state  4\n program -> declr_vars ."
+		label:	"state  4\n program -> dec .\n dec -> dec . declr_vars"
+	}
+	backedge: {
+		sourcename:	"4"
+		targetname:	"1"
+		label:	"VAR"
+		color:	blue
+		textcolor:	black
+	}
+	edge: {
+		sourcename:	"4"
+		targetname:	"14"
+		label:	"declr_vars"
+		color:	green
+		textcolor:	black
 	}
 	node: {
 		title:	"5"
-		label:	"state  5\n type -> INT ."
+		label:	"state  5\n dec -> declr_vars ."
 	}
 	node: {
 		title:	"6"
-		label:	"state  6\n type -> FLOAT ."
+		label:	"state  6\n type -> INT ."
 	}
 	node: {
 		title:	"7"
-		label:	"state  7\n type -> REAL ."
+		label:	"state  7\n type -> FLOAT ."
 	}
 	node: {
 		title:	"8"
-		label:	"state  8\n type -> CHAR ."
+		label:	"state  8\n type -> REAL ."
 	}
 	node: {
 		title:	"9"
-		label:	"state  9\n type -> BOOL ."
+		label:	"state  9\n type -> CHAR ."
 	}
 	node: {
 		title:	"10"
-		label:	"state 10\n type -> STRING ."
+		label:	"state 10\n type -> BOOL ."
 	}
 	node: {
 		title:	"11"
-		label:	"state 11\n declr_vars -> VAR type . COLON ID ass vars SEMICOL"
+		label:	"state 11\n type -> STRING ."
+	}
+	node: {
+		title:	"12"
+		label:	"state 12\n declr_vars -> VAR type . COLON ID ass vars SEMICOL"
 	}
 	edge: {
-		sourcename:	"11"
-		targetname:	"13"
+		sourcename:	"12"
+		targetname:	"15"
 		label:	"COLON"
 		color:	blue
 		textcolor:	black
 	}
 	node: {
-		title:	"12"
-		label:	"state 12\n $accept -> s $end ."
+		title:	"13"
+		label:	"state 13\n $accept -> s $end ."
 	}
 	node: {
-		title:	"13"
-		label:	"state 13\n declr_vars -> VAR type COLON . ID ass vars SEMICOL"
+		title:	"14"
+		label:	"state 14\n dec -> dec declr_vars ."
+	}
+	node: {
+		title:	"15"
+		label:	"state 15\n declr_vars -> VAR type COLON . ID ass vars SEMICOL"
 	}
 	edge: {
-		sourcename:	"13"
-		targetname:	"14"
+		sourcename:	"15"
+		targetname:	"16"
 		label:	"ID"
 		color:	blue
 		textcolor:	black
 	}
 	node: {
-		title:	"14"
-		label:	"state 14\n declr_vars -> VAR type COLON ID . ass vars SEMICOL"
+		title:	"16"
+		label:	"state 16\n declr_vars -> VAR type COLON ID . ass vars SEMICOL"
 	}
 	edge: {
-		sourcename:	"14"
-		targetname:	"15"
+		sourcename:	"16"
+		targetname:	"17"
 		label:	"ASS"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"14"
-		targetname:	"16"
+		sourcename:	"16"
+		targetname:	"18"
 		label:	"ass"
 		color:	green
 		textcolor:	black
 	}
 	node: {
-		title:	"15"
-		label:	"state 15\n ass -> ASS . value"
+		title:	"17"
+		label:	"state 17\n ass -> ASS . value"
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"17"
+		sourcename:	"17"
+		targetname:	"19"
 		label:	"ID"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"18"
+		sourcename:	"17"
+		targetname:	"20"
 		label:	"LIT_INT"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"19"
+		sourcename:	"17"
+		targetname:	"21"
 		label:	"LIT_FLOAT"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"20"
+		sourcename:	"17"
+		targetname:	"22"
 		label:	"LIT_REAL"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"21"
+		sourcename:	"17"
+		targetname:	"23"
 		label:	"LIT_CHAR"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"22"
+		sourcename:	"17"
+		targetname:	"24"
 		label:	"LIT_BOOL"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"23"
+		sourcename:	"17"
+		targetname:	"25"
 		label:	"LIT_STRING"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"24"
+		sourcename:	"17"
+		targetname:	"26"
 		label:	"literal"
 		color:	green
 		textcolor:	black
 	}
 	edge: {
-		sourcename:	"15"
-		targetname:	"25"
+		sourcename:	"17"
+		targetname:	"27"
 		label:	"value"
 		color:	green
 		textcolor:	black
 	}
 	node: {
-		title:	"16"
-		label:	"state 16\n declr_vars -> VAR type COLON ID ass . vars SEMICOL"
+		title:	"18"
+		label:	"state 18\n declr_vars -> VAR type COLON ID ass . vars SEMICOL"
 	}
 	edge: {
-		sourcename:	"16"
-		targetname:	"26"
-		label:	"COMMA"
-		color:	blue
-		textcolor:	black
-	}
-	edge: {
-		sourcename:	"16"
-		targetname:	"27"
+		sourcename:	"18"
+		targetname:	"28"
 		label:	"vars"
 		color:	green
 		textcolor:	black
 	}
 	node: {
-		title:	"17"
-		label:	"state 17\n value -> ID ."
-	}
-	node: {
-		title:	"18"
-		label:	"state 18\n literal -> LIT_INT ."
-	}
-	node: {
 		title:	"19"
-		label:	"state 19\n literal -> LIT_FLOAT ."
+		label:	"state 19\n value -> ID ."
 	}
 	node: {
 		title:	"20"
-		label:	"state 20\n literal -> LIT_REAL ."
+		label:	"state 20\n literal -> LIT_INT ."
 	}
 	node: {
 		title:	"21"
-		label:	"state 21\n literal -> LIT_CHAR ."
+		label:	"state 21\n literal -> LIT_FLOAT ."
 	}
 	node: {
 		title:	"22"
-		label:	"state 22\n literal -> LIT_BOOL ."
+		label:	"state 22\n literal -> LIT_REAL ."
 	}
 	node: {
 		title:	"23"
-		label:	"state 23\n literal -> LIT_STRING ."
+		label:	"state 23\n literal -> LIT_CHAR ."
 	}
 	node: {
 		title:	"24"
-		label:	"state 24\n value -> literal ."
+		label:	"state 24\n literal -> LIT_BOOL ."
 	}
 	node: {
 		title:	"25"
-		label:	"state 25\n ass -> ASS value ."
+		label:	"state 25\n literal -> LIT_STRING ."
 	}
 	node: {
 		title:	"26"
-		label:	"state 26\n vars -> COMMA . ID ass vars"
-	}
-	edge: {
-		sourcename:	"26"
-		targetname:	"28"
-		label:	"ID"
-		color:	blue
-		textcolor:	black
+		label:	"state 26\n value -> literal ."
 	}
 	node: {
 		title:	"27"
-		label:	"state 27\n declr_vars -> VAR type COLON ID ass vars . SEMICOL"
-	}
-	edge: {
-		sourcename:	"27"
-		targetname:	"29"
-		label:	"SEMICOL"
-		color:	blue
-		textcolor:	black
+		label:	"state 27\n ass -> ASS value ."
 	}
 	node: {
 		title:	"28"
-		label:	"state 28\n vars -> COMMA ID . ass vars"
+		label:	"state 28\n declr_vars -> VAR type COLON ID ass vars . SEMICOL\n vars -> vars . COMMA ID ass"
 	}
-	backedge: {
+	edge: {
 		sourcename:	"28"
-		targetname:	"15"
-		label:	"ASS"
+		targetname:	"29"
+		label:	"SEMICOL"
 		color:	blue
 		textcolor:	black
 	}
 	edge: {
 		sourcename:	"28"
 		targetname:	"30"
-		label:	"ass"
-		color:	green
+		label:	"COMMA"
+		color:	blue
 		textcolor:	black
 	}
 	node: {
@@ -343,25 +343,36 @@ graph: {
 	}
 	node: {
 		title:	"30"
-		label:	"state 30\n vars -> COMMA ID ass . vars"
-	}
-	backedge: {
-		sourcename:	"30"
-		targetname:	"26"
-		label:	"COMMA"
-		color:	blue
-		textcolor:	black
+		label:	"state 30\n vars -> vars COMMA . ID ass"
 	}
 	edge: {
 		sourcename:	"30"
 		targetname:	"31"
-		label:	"vars"
-		color:	green
+		label:	"ID"
+		color:	blue
 		textcolor:	black
 	}
 	node: {
 		title:	"31"
-		label:	"state 31\n vars -> COMMA ID ass vars ."
+		label:	"state 31\n vars -> vars COMMA ID . ass"
+	}
+	backedge: {
+		sourcename:	"31"
+		targetname:	"17"
+		label:	"ASS"
+		color:	blue
+		textcolor:	black
+	}
+	edge: {
+		sourcename:	"31"
+		targetname:	"32"
+		label:	"ass"
+		color:	green
+		textcolor:	black
+	}
+	node: {
+		title:	"32"
+		label:	"state 32\n vars -> vars COMMA ID ass ."
 	}
 
 

@@ -20,28 +20,13 @@ ID  {LETTER}({CHARACHTER}|_)*
 %%
 [ \t\s\r]           {col++;}
 [ \n]               { yylineno++; col = 1; }
-"/*"                {
-                        char c;
-                        while (1){
-                            do{
-                                c = *yytext;
-                                yytext++;
-                                col++;
-                                if ( c == '\n')
-                                    yylineno++;
-                            }while ( c != '*' && c != EOF );    /* eat up text of comment */
-                            if ( c == '*' ){
-                                while ( (c = input()) == '*' );
-                                if ( c == '/' )
-                                    break;    /* found the end */
-                            }
-                            if ( c == EOF ){
-                                printf( "EOF in comment");
-                                break;
-                                }
-                            }
+"/*"(.|\n)*"*/"     { 
+                        for(int i =0;i<yyleng;i++){
+                            if(yytext[i] == '\n')
+                                yylineno++;
                         }
- /*KEYWORDS*/
+                    }
+"/*"                {  printf("missing closing comment!"); }
 bool                {  col+= yyleng;printf("BOOL "); }
 char                {  col+= yyleng;printf("CHAR "); }
 int                 {  col+= yyleng;printf("INT "); }
@@ -93,15 +78,15 @@ true|false          { printf("LIT_BOOL "); }
 {string}            {  col+= yyleng;printf("LIT_STRING "); }
 {ID}                {  col+= yyleng;printf("ID "); }
  /*others*/
-";"         { printf("SEMICOL "); }
-","         { printf("COMMA "); }
-"|"         { printf("STRLEN "); }
-"{"         { printf("BLOCK_OPEN "); }
-"}"         { printf("BLOCK_CLOSE "); }
-"("         { printf("PARENT_OPEN "); }
-")"         { printf("PARENT_CLOSE "); }
-"["         { printf("INDEX_OPEN "); }
-"]"         { printf("INDEX_CLOSE "); }
-":"         { printf("COLON "); }
-.                   {  printf("UNRECOGNIZED TOKEN ");col+= yyleng; }
+";"                 { col+= yyleng;printf("SEMICOL "); }
+","                 { col+= yyleng;printf("COMMA "); }
+"|"                 { col+= yyleng;printf("STRLEN "); }
+"{"                 { col+= yyleng;printf("BLOCK_OPEN "); }
+"}"                 { col+= yyleng;printf("BLOCK_CLOSE "); }
+"("                 { col+= yyleng;printf("PARENT_OPEN "); }
+")"                 { col+= yyleng;printf("PARENT_CLOSE "); }
+"["                 { col+= yyleng;printf("INDEX_OPEN "); }
+"]"                 { col+= yyleng;printf("INDEX_CLOSE "); }
+":"                 { col+= yyleng;printf("COLON "); }
+.                   {  printf("UNRECOGNIZED TOKEN ");col+= yyleng;printf("yytext "); }
 %%

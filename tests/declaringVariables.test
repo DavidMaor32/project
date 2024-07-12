@@ -1,4 +1,5 @@
-var int:xy <- 70, t<-5, r,a5<-3;
+var int:xyr,a5<-3;
+bool:w<-70;
 /*
 sdfds
 sdfdssdf

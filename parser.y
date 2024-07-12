@@ -108,9 +108,18 @@ expr: ID
 
 var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; 
 
+stmt: 
+    | ID ASS value
+    | funcall
+    | stmt_if
+    | stmt_loop
+    | block
+    ;
 
 stmt_if: IF PARENT_OPEN expr PARENT_CLOSE stmnt
     | IF PARENT_OPEN expr PARENT_CLOSE stmnt ELSE stmt 
+
+stmt_loop: stmt_for | stmt_while | stmt_do
 
 */
 

@@ -17,6 +17,7 @@
 
 # lex source file name
 LEX_SRC = scanner.l
+LEX_TOKENIZER = tokenizer.l
 
 # yacc source file name
 YACC_SRC = parser.y
@@ -24,6 +25,9 @@ YACC_SRC = parser.y
 # compiler name
 EXEC = compiler.exe
 
+DEBUG = debugger.exe
+
+TOKEN = tokenizer.exe
 
 CC = gcc
 FLAGS = -ll -Ly
@@ -41,6 +45,12 @@ all: $(EXEC)
 $(EXEC): $(YACC_OUT) $(LEX_OUT)
 	$(CC) -o $(EXEC) $(YACC_OUT) $(FLAGS)
 
+	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
+	$(CC) -o $(DEBUG) $(YACC_OUT) $(FLAGS)
+
+	$(LEX) $(LEX_TOKENIZER)
+	$(CC) -o $(TOKEN) $(LEX_OUT) $(FLAGS)
+
 # how to generate lex output
 $(LEX_OUT): $(LEX_SRC)
 	$(LEX) $(LEX_SRC)
@@ -52,8 +62,15 @@ $(YACC_OUT): $(YACC_SRC)
 # debug
 debug:
 	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
+	$(CC) -o $(DEBUG) $(YACC_OUT) $(FLAGS)
+
+# tokenizer
+token:
+	$(LEX) $(LEX_TOKENIZER)
+	$(CC) -o $(TOKEN) $(LEX_OUT) $(FLAGS)
+
 # clean all generated files
 clean:
-	rm -f $(EXEC) $(LEX_OUT) $(YACC_OUT) y.*
+	rm -f $(LEX_OUT) $(YACC_OUT) y.*
 
 .PHONY: all clean
