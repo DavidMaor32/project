@@ -100,15 +100,26 @@ func_void:  VOID func_sign BLOCK_OPEN block BLOCK_CLOSE
 func_sign: ID PARENT_OPEN params PARENT_CLOSE static;
 static: COLON STATIC | ;
 params: ARGS lists |;
-lists: lists SEMICOL type list | type list;
+lists: dec_str
+    | lists SEMICOL type COLON list 
+    | type COLON list
+    | type list {yyerror("missing \':\'");}
+    ;
+dec_str: STRING strs;
+strs: strs COMMA ID size | ID size;
+size: INDEX_OPEN LIT_INT INDEX_CLOSE;
 list: list COMMA ID | ID;
 return: RETURN expr SEMICOL;
 
 
-block: dec functions
-    | dec
+block: dec functions stmnts
+    | dec stmts
+    | functions stmts
     |
     ;
+
+stmts:
+
 
 literal: LIT_BOOL 
     | LIT_CHAR 
@@ -136,9 +147,11 @@ ptype: P_CHAR
     | P_INT ;
 
 dec: declr_vars | dec declr_vars ;
-declr_vars: VAR type COLON ID ass vars SEMICOL ;
+declr_vars: VAR type COLON ID ass vars SEMICOL 
+    | VAR ID {yyerror("missing type");}
+    ;
 vars: vars COMMA ID ass | ;
-ass: ASS value | ;
+ass: ASS expr | ;
 
 expr: value 
     | PARENT_OPEN expr PARENT_CLOSE 
