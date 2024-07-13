@@ -73,7 +73,7 @@ typedef struct {
 %%
 s: program { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
 
-program: dec;
+program: functions;
 
 literal: LIT_BOOL 
     | LIT_CHAR 
@@ -100,28 +100,16 @@ dec: declr_vars | dec declr_vars ;
 declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); }
 vars: vars COMMA ID ass | ;
 ass: ASS value | ;
-/* 
-expr: ID
-    | literal { $$ = $1}
-    | PARENT_OPEN expr PARENT_CLOSE
-    | 
 
-var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; 
+functions: functions function | function;
+function: modifier func_void | modifier func_ret;
 
-stmt: 
-    | ID ASS value
-    | funcall
-    | stmt_if
-    | stmt_loop
-    | block
-    ;
+modifier: PUBLIC | PRIVATE;
+static: COLON STATIC | ;
+params: 
 
-stmt_if: IF PARENT_OPEN expr PARENT_CLOSE stmnt
-    | IF PARENT_OPEN expr PARENT_CLOSE stmnt ELSE stmt 
-
-stmt_loop: stmt_for | stmt_while | stmt_do
-
-*/
+func_ret: type ID PARENT_OPEN params PARENT_CLOSE static bodyRet;
+func_void: VOID ID PARENT_OPEN params PARENT_CLOSE static body ;
 
 %%
 #include "lex.yy.c"
