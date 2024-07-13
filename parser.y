@@ -127,12 +127,13 @@ type: BOOL
     | INT 
     | FLOAT 
     | REAL 
+    |ptype
     ;
     
-/* ptype: P_CHAR 
+ptype: P_CHAR 
     | P_REAL 
     | P_FLOAT 
-    | P_INT ; */
+    | P_INT ;
 
 dec: declr_vars | dec declr_vars ;
 declr_vars: VAR type COLON ID ass vars SEMICOL ;
