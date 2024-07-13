@@ -106,10 +106,15 @@ function: modifier func_void | modifier func_ret;
 
 modifier: PUBLIC | PRIVATE;
 static: COLON STATIC | ;
-params: 
+params: | ARGS lists;
+lists: lists SEMICOL list | list;
+list: list COMMA ID | ID;
 
-func_ret: type ID PARENT_OPEN params PARENT_CLOSE static bodyRet;
-func_void: VOID ID PARENT_OPEN params PARENT_CLOSE static body ;
+func_ret: type ID PARENT_OPEN params PARENT_CLOSE static BLOCK_OPEN bodyRet BLOCK_CLOSE;
+func_void: VOID ID PARENT_OPEN params PARENT_CLOSE static BLOCK_OPEN body BLOCK_CLOSE;
+bodyRet: body return;
+return: RETURN
+
 
 %%
 #include "lex.yy.c"
