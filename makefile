@@ -44,12 +44,7 @@ all: $(EXEC)
 # how to build the executable(compiler)
 $(EXEC): $(YACC_OUT) $(LEX_OUT)
 	$(CC) -o $(EXEC) $(YACC_OUT) $(FLAGS)
-
-	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
-	$(CC) -o $(DEBUG) $(YACC_OUT) $(FLAGS)
-
-	$(LEX) $(LEX_TOKENIZER)
-	$(CC) -o $(TOKEN) $(LEX_OUT) $(FLAGS)
+	make clean
 
 # how to generate lex output
 $(LEX_OUT): $(LEX_SRC)
@@ -60,17 +55,19 @@ $(YACC_OUT): $(YACC_SRC)
 	$(YACC) $(YACC_SRC)
 
 # debug
-debug:
+debug: $(LEX_OUT)
 	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
 	$(CC) -o $(DEBUG) $(YACC_OUT) $(FLAGS)
+	make clean
 
 # tokenizer
 token:
 	$(LEX) $(LEX_TOKENIZER)
 	$(CC) -o $(TOKEN) $(LEX_OUT) $(FLAGS)
+	make clean
 
 # clean all generated files
 clean:
-	rm -f $(LEX_OUT) $(YACC_OUT) y.*
+	rm -f $(LEX_OUT) $(YACC_OUT) y.vcg *.c
 
 .PHONY: all clean
