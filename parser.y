@@ -134,6 +134,23 @@ opt_binary:expr '+' expr
     | expr LESS_EQ expr
     ;
 
+/* if_stmt: IF PARENT_OPEN expr PARENT_CLOSE BLOCK_OPEN block BLOCK_CLOSE else_stmt
+       | IF PARENT_OPEN expr PARENT_CLOSE stmt else_stmt ;
+else_stmt: ELSE BLOCK_OPEN block BLOCK_CLOSE
+         | ELSE stmt | ;
+
+block: stmt; */
+
+func_call: lhs ASS ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL
+         | ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL ;
+func_expr: func_expr COMMA expr | expr | ;
+
+
+
+ass_stmt: lhs ASS expr SEMICOL ;
+lhs: ID | ID INDEX_OPEN expr INDEX_CLOSE ; 
+
+
 functions: functions function | function;
 function: modifier func_void | modifier func_ret;
 
