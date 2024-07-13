@@ -124,14 +124,23 @@ size: INDEX_OPEN LIT_INT INDEX_CLOSE;
 list: list COMMA ID | ID;
 return: RETURN expr SEMICOL;
 
+<<<<<<< HEAD
 block: dec functions stmts
+=======
+
+block: dec functions 
+>>>>>>> c83d19f47b2a839411004f68cd2b17b77948e121
     | dec stmts
     | functions stmts
     | stmts 
     | dec |
     ;
 
+<<<<<<< HEAD
 stmts: stmts stmt | stmt ;
+=======
+stmts: ;
+>>>>>>> c83d19f47b2a839411004f68cd2b17b77948e121
 
 
 stmt: ass_stmt | func_call | if_stmt | if_else_stmt | loop_stmt; 
@@ -141,8 +150,23 @@ if_else_stmt: IF PARENT_OPEN expr PARENT_CLOSE body ELSE body;
 
 body: stmt | BLOCK_OPEN stmts BLOCK_CLOSE | BLOCK_OPEN BLOCK_CLOSE;
 
+<<<<<<< HEAD
 func_call: lhs ASS ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL
     | ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL;
+=======
+type: BOOL 
+    | CHAR
+    | INT 
+    | FLOAT 
+    | REAL 
+    |ptype
+    ;
+    
+ptype: P_CHAR 
+    | P_REAL 
+    | P_FLOAT 
+    | P_INT ;
+>>>>>>> c83d19f47b2a839411004f68cd2b17b77948e121
 
 func_expr: func_expr COMMA expr | expr |;
 
