@@ -58,13 +58,13 @@ $(YACC_OUT): $(YACC_SRC)
 debug: $(LEX_OUT)
 	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
 	$(CC) -o $(DEBUG) $(YACC_OUT) $(FLAGS)
-	make clean
+	@make clean
 
 # tokenizer
 token:
 	$(LEX) $(LEX_TOKENIZER)
 	$(CC) -o $(TOKEN) $(LEX_OUT) $(FLAGS)
-	make clean
+	@make clean
 
 # clean all generated files
 clean:

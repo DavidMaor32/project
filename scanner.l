@@ -20,7 +20,7 @@ ID  {LETTER}({CHARACHTER}|_)*
 %%
 [ \t\s\r]           {   col++;}
 [ \n]               {   yylineno++; col = 1; }
-"/*"(.|\n)*"*/"     {   for(int i =0;i<yyleng;i++) if(yytext[i] == '\n') yylineno++; }
+"/*"(.|\n)*"*/"     {   for(int i =0;i<yyleng;i++) {if(yytext[i] == '\n') {yylineno++;col=0;} col++;} }
 "/*"                {   yyerror("missing closing comment!"); }          
  /*KEYWORDS*/
 bool                {   col+= yyleng;return BOOL; }

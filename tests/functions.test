@@ -1,1 +1,19 @@
-int f(){}
+/*fails, maybe the comment but definatly something with the funcion(s)*/
+public void func(){}
+
+/*
+public int f(){ 
+    var int:x;
+    return 5;
+    }
+*/
+
+
+
+public void e32(){
+    var bool:r;
+    var float:r<-true;
+    return;
+    }
+
+private int f(args>>int x){return 1;}

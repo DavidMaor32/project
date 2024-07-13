@@ -73,9 +73,42 @@ typedef struct {
 %nonassoc UPLUS
 %right INDEX_OPEN
 %%
-s: expr SEMICOL { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
+s: program { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
 
 program: functions;
+/*
+program: functions main | main; 
+main: PUBLIC VOID MAIN PARENT_OPEN PARENT_CLOSE COLON STATIC BLOCK_OPEN block BLOCK_CLOSE; 
+*/
+
+functions: 
+    function 
+    | functions function
+    ;
+
+function: modifier func;
+func:func_void | func_ret;
+
+modifier: PUBLIC | PRIVATE;
+
+func_ret:  type func_sign BLOCK_OPEN block return BLOCK_CLOSE
+    | type func_sign BLOCK_OPEN block BLOCK_CLOSE { yyerror("misssing return statement!");}
+
+func_void:  VOID func_sign BLOCK_OPEN block BLOCK_CLOSE
+    | VOID func_sign BLOCK_OPEN block RETURN { yyerror("void function can\'t return value"); }
+
+func_sign: ID PARENT_OPEN params PARENT_CLOSE static;
+static: COLON STATIC | ;
+params: ARGS lists |;
+lists: lists SEMICOL type list | type list;
+list: list COMMA ID | ID;
+return: RETURN expr SEMICOL;
+
+
+block: dec functions
+    | dec
+    |
+    ;
 
 literal: LIT_BOOL 
     | LIT_CHAR 
@@ -102,7 +135,7 @@ type: BOOL
     | P_INT ; */
 
 dec: declr_vars | dec declr_vars ;
-declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); }
+declr_vars: VAR type COLON ID ass vars SEMICOL ;
 vars: vars COMMA ID ass | ;
 ass: ASS value | ;
 
@@ -142,7 +175,8 @@ else_stmt: ELSE BLOCK_OPEN block BLOCK_CLOSE
 block: stmt; */
 
 func_call: lhs ASS ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL
-         | ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL ;
+         | ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL 
+         ;
 func_expr: func_expr COMMA expr | expr | ;
 
 
@@ -151,20 +185,9 @@ ass_stmt: lhs ASS expr SEMICOL ;
 lhs: ID | ID INDEX_OPEN expr INDEX_CLOSE ; 
 
 
-functions: functions function | function;
-function: modifier func_void | modifier func_ret;
 
-modifier: PUBLIC | PRIVATE;
-static: COLON STATIC | ;
-params: | ARGS lists;
-lists: lists SEMICOL list | list;
-list: list COMMA ID | ID;
 
-func_ret: type ID PARENT_OPEN params PARENT_CLOSE static BLOCK_OPEN bodyRet BLOCK_CLOSE;
-func_void: VOID ID PARENT_OPEN params PARENT_CLOSE static BLOCK_OPEN body BLOCK_CLOSE;
-bodyRet: body return;
-body: ;
-return: RETURN
+
 
 %%
 #include "lex.yy.c"
@@ -176,7 +199,7 @@ int main(){
     return yyparse();
 }
 int yyerror(const char* s){
-    fprintf(stderr,"%s in <%d,%d> \"%s\"\n", s, yylineno,col, yytext);
+    fprintf(stderr,"\n<%d:%d> ERROR: \"%s\"\tTOKEN:%s\n", yylineno,col, s, yytext);
     exit(1);
     return 1;
 }
