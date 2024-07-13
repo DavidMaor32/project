@@ -1,7 +1,6 @@
 *.exe
-*.vcg
+y.*
 *.c
 *.h
-*.output
 .DS_Store
 .TODO
