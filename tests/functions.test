@@ -3,7 +3,7 @@ public void func(){}
 
 /*
 public int f(){ 
-    var int:x;
+    var int:x, r <-e3;
     return 5;
     }
 */

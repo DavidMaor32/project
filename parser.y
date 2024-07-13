@@ -112,13 +112,13 @@ list: list COMMA ID | ID;
 return: RETURN expr SEMICOL;
 
 
-block: dec functions stmnts
+block: dec functions 
     | dec stmts
     | functions stmts
     |
     ;
 
-stmts:
+stmts: ;
 
 
 literal: LIT_BOOL 
@@ -133,8 +133,7 @@ value: literal | ID ;
 string: ID | LIT_STRING ;
 
 type: BOOL 
-    | CHAR 
-    | STRING 
+    | CHAR
     | INT 
     | FLOAT 
     | REAL 
