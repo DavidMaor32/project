@@ -19,13 +19,8 @@ ID  {LETTER}({CHARACHTER}|_)*
 %}
 %%
 [ \t\s\r]           {col++;}
-[ \n]               { yylineno++; col = 1; }
-"/*"(.|\n)*"*/"     { 
-                        for(int i =0;i<yyleng;i++){
-                            if(yytext[i] == '\n')
-                                yylineno++;
-                        }
-                    }
+[ \n]               { yylineno++; col = 1;printf("\n"); }
+"/*"(.|\n)*"*/"     { for(int i =0;i<yyleng;i++) if(yytext[i] == '\n') yylineno++; }
 "/*"                {  printf("missing closing comment!"); }
 bool                {  col+= yyleng;printf("BOOL "); }
 char                {  col+= yyleng;printf("CHAR "); }
@@ -63,11 +58,8 @@ main                {  col+= yyleng;printf("MAIN "); }
 "!"                 {  col+= yyleng;printf("NOT "); }
 "||"                {  col+= yyleng;printf("OR "); }
 "/"                 {  col+= yyleng;printf("DIV "); }
-"-"                 {  col+= yyleng;printf("MINUS "); }
-"+"                 {  col+= yyleng;printf("PLUS "); }
-{ID}\*              {  col+= yyleng;printf("MUL "); }
-"&"{ID}             {  col+= yyleng;printf("REF "); }
-\*{ID}              {  col+= yyleng;printf("DEREF "); }
+[*+-]              {  col+= yyleng;printf("%c ", *yytext); }
+"&"                 {  col+= yyleng;printf("REF "); }
  /*Literals*/
 true|false          { printf("LIT_BOOL "); }
 {char}              { printf("LIT_CHAR "); }
