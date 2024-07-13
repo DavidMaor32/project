@@ -75,7 +75,7 @@ typedef struct {
 %%
 s: expr SEMICOL { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
 
-/* program: dec; */
+program: functions;
 
 literal: LIT_BOOL 
     | LIT_CHAR 
@@ -88,24 +88,23 @@ value: literal | ID ;
 
 string: ID | LIT_STRING ;
 
-/* type: BOOL 
+type: BOOL 
     | CHAR 
     | STRING 
     | INT 
     | FLOAT 
     | REAL 
-    ; */
+    ;
     
 /* ptype: P_CHAR 
     | P_REAL 
     | P_FLOAT 
     | P_INT ; */
 
-/* dec: declr_vars | dec declr_vars ; */
-/* declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); } */
-/* vars: vars COMMA ID ass | ;
-ass: ASS value | ; */
-
+dec: declr_vars | dec declr_vars ;
+declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); }
+vars: vars COMMA ID ass | ;
+ass: ASS value | ;
 
 expr: value 
     | PARENT_OPEN expr PARENT_CLOSE 
@@ -134,30 +133,21 @@ opt_binary:expr '+' expr
     | expr LESS expr
     | expr LESS_EQ expr
     ;
-    
-    
 
-    /*maybe expr = expr*/
-    ;
+functions: functions function | function;
+function: modifier func_void | modifier func_ret;
 
-/* 
-var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; 
+modifier: PUBLIC | PRIVATE;
+static: COLON STATIC | ;
+params: | ARGS lists;
+lists: lists SEMICOL list | list;
+list: list COMMA ID | ID;
 
-stmts: stmnts stmt SEMICOL | ;
-stmt: 
-    | ID ASS value
-    | funcall
-    | stmt_if
-    | stmt_loop
-    | block
-    ;
-
-stmt_if: IF PARENT_OPEN expr PARENT_CLOSE stmnt
-    | IF PARENT_OPEN expr PARENT_CLOSE stmnt ELSE stmt 
-
-stmt_loop: stmt_for | stmt_while | stmt_do
-
-*/
+func_ret: type ID PARENT_OPEN params PARENT_CLOSE static BLOCK_OPEN bodyRet BLOCK_CLOSE;
+func_void: VOID ID PARENT_OPEN params PARENT_CLOSE static BLOCK_OPEN body BLOCK_CLOSE;
+bodyRet: body return;
+body: ;
+return: RETURN
 
 %%
 #include "lex.yy.c"
