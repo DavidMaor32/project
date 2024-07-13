@@ -1,3 +1,13 @@
-foo();
-foo(1);
-y <- x + y + z;
+public int foo(){
+    var int: x<-5**y;
+    return x;
+}
+
+/*ab
+
+
+
+
+cg
+*/
+
