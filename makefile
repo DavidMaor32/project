@@ -31,7 +31,7 @@ TOKEN = tokenizer.exe
 
 CC = gcc
 FLAGS = -ll -Ly
-FLAGS_DEBUG = --debug --verbose --graph
+FLAGS_DEBUG = --debug --verbose --graph -Wcounterexamples
 LEX = lex
 YACC = yacc
 LEX_OUT = lex.yy.c
