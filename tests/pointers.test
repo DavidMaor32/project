@@ -1,0 +1,3 @@
+public void f(){
+    var int:x<-&(y);
+}
