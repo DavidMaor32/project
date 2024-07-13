@@ -1,5 +1,7 @@
 %{
-#include <stdio.h>
+#include 
+#include 
+#define printdent(x) for(int _ = 0; _ < x; _++) printf("\t");
 int yylex();
 int yyerror(const char* s);
 int yylineno, col;
@@ -8,10 +10,22 @@ typedef enum {
     false, 
     true
 } bool;
+
 typedef struct {
     char* str;
     unsigned int size;
 } string;
+
+typedef struct{
+    char* token;
+    struct node* left;
+    struct node* right;
+}node;
+
+node* mknode(char* token, node* left, node* right);
+void printree(node* tree);
+void indentree(node* tree, int level);
+
 %}
 %union {
     int _int;
@@ -19,12 +33,13 @@ typedef struct {
     double _real;
     char _char;
     bool _bool;
-    string _str;
+    struct string* _str;
     int* p_int;
     float* p_float;
     double* p_real;
     char* p_char;
     void* _nullptr;
+    struct node* node;
 }
 
 %token IF ELSE
@@ -41,17 +56,17 @@ typedef struct {
 %token PARENT_OPEN PARENT_CLOSE 
 %token INDEX_OPEN INDEX_CLOSE
 
-%token <_int> LIT_INT INT
-%token <_float> LIT_FLOAT FLOAT
-%token <_real> LIT_REAL REAL
-%token <_char> LIT_CHAR CHAR
-%token <_bool> LIT_BOOL BOOL
-%token <_nullptr> NULLPTR
-%token <p_int> P_INT
-%token <p_float> P_FLOAT
-%token <p_real> P_REAL
-%token <p_char> P_CHAR
-%token <p_char> LIT_STRING STRING
+%token  LIT_INT INT
+%token  LIT_FLOAT FLOAT
+%token  LIT_REAL REAL
+%token  LIT_CHAR CHAR
+%token  LIT_BOOL BOOL
+%token  NULLPTR
+%token  P_INT
+%token  P_FLOAT
+%token  P_REAL
+%token  P_CHAR
+%token  LIT_STRING STRING
 
 %left COMMA
 %right ASS
@@ -70,7 +85,10 @@ typedef struct {
 %nonassoc UPLUS
 %right INDEX_OPEN
 %%
-s: program { printf("parsed successfully! %d:%d\n", yylineno, col); return 0; }
+s: program  { 
+                // printf("parsed successfully! %d:%d\n", yylineno, col); return 0; 
+                printree($1);
+            }
 
 program: functions;
 
@@ -202,7 +220,23 @@ int main() {
 }
 
 int yyerror(const char* s) {
-    fprintf(stderr, "\n<%d:%d> ERROR: \"%s\"\tTOKEN:%s\n", yylineno, col, s, yytext);
+    fprintf(stderr, "\n ERROR: \"%s\"\tTOKEN:%s\n", yylineno, col, s, yytext);
     exit(1);
     return 1;
+}
+
+node* mknode(char* token, node* left, node* right){
+    node* newnode = (node*)malloc(sizeof(node));
+    newnode->token = strdup(token); 
+    newnode->left = left;
+    newnode->right = right;
+    return newnode;
+}
+
+void printree(node* tree){
+    indentree(tree, 0);
+}
+
+void indentree(node* tree, int level){
+    
 }
