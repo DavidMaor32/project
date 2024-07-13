@@ -64,11 +64,8 @@ main                {  col+= yyleng;return MAIN; }
 "!"                 {  col+= yyleng;return NOT; }
 "||"                {  col+= yyleng;return OR; }
 "/"                 {  col+= yyleng;return DIV; }
-"-"                 {  col+= yyleng;return MINUS; }
-"+"                 {  col+= yyleng;return PLUS; }
-{ID}\*              {  col+= yyleng;return MUL; }
-"&"{ID}             {  col+= yyleng;return REF; }
-\*{ID}              {  col+= yyleng;return DEREF; }
+[*+-]                  {  col+= yyleng;return *yytext; }
+"&"             {  col+= yyleng;return REF; }
  /*Literals*/
 true|false          {  col+= yyleng;yylval._bool = (strcmp("true",yytext) == 0 ? 1: 0); return LIT_BOOL; }
 {char}              {  col+= yyleng;yylval._char = yytext[1]; return LIT_CHAR; }

@@ -37,7 +37,7 @@ typedef struct {
 %token PUBLIC PRIVATE ARGS STATIC MAIN RETURN VOID
 
 %token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR  
-%token DIV MINUS PLUS MUL
+%token DIV '-' '+' '*'
 %token DEREF REF
 
 %token COLON SEMICOL COMMA 
@@ -64,50 +64,86 @@ typedef struct {
 %left AND
 %nonassoc EQ NOT_EQ
 %nonassoc LESS LESS_EQ GRTR GRTR_EQ
-%left PLUS MINUS
-%left MUL DIV
-%right NOT
-%right DEREF
-%right REF
+%left '+' '-'
+%left '*' DIV
+%nonassoc REF
+%nonassoc DEREF 
+%nonassoc NOT
+%nonassoc UMINUS 
+%nonassoc UPLUS
 %right INDEX_OPEN
 %%
-s: program { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
+s: expr SEMICOL { printf("parsed successfully!%d:%d\n",yylineno,col);return 0; }
 
-program: dec;
+/* program: dec; */
 
 literal: LIT_BOOL 
     | LIT_CHAR 
     | LIT_REAL 
     | LIT_FLOAT 
-    | LIT_INT 
-    | LIT_STRING ;
+    | LIT_INT  
+    ;
 
 value: literal | ID ;
 
-type: BOOL 
+string: ID | LIT_STRING ;
+
+/* type: BOOL 
     | CHAR 
     | STRING 
     | INT 
     | FLOAT 
-    | REAL ;
+    | REAL 
+    ; */
     
 /* ptype: P_CHAR 
     | P_REAL 
     | P_FLOAT 
     | P_INT ; */
 
-dec: declr_vars | dec declr_vars ;
-declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); }
-vars: vars COMMA ID ass | ;
-ass: ASS value | ;
-/* 
-expr: ID
-    | literal { $$ = $1}
-    | PARENT_OPEN expr PARENT_CLOSE
-    | 
+/* dec: declr_vars | dec declr_vars ; */
+/* declr_vars: VAR type COLON ID ass vars SEMICOL { printf("%s",yytext); } */
+/* vars: vars COMMA ID ass | ;
+ass: ASS value | ; */
 
+
+expr: value 
+    | PARENT_OPEN expr PARENT_CLOSE 
+    | opt_unary 
+    | STRLEN string STRLEN
+    | string INDEX_OPEN expr INDEX_CLOSE %prec INDEX_OPEN
+    | opt_binary;
+
+opt_unary: NOT expr
+    | '-' expr %prec UMINUS
+    | '+' expr %prec UPLUS
+    | '*' expr %prec DEREF
+    | REF expr
+    ;
+
+opt_binary:expr '+' expr
+    | expr '-' expr 
+    | expr '*' expr 
+    | expr DIV expr
+    | expr AND expr
+    | expr OR expr
+    | expr EQ expr
+    | expr NOT_EQ expr
+    | expr GRTR expr
+    | expr GRTR_EQ expr
+    | expr LESS expr
+    | expr LESS_EQ expr
+    ;
+    
+    
+
+    /*maybe expr = expr*/
+    ;
+
+/* 
 var_str:ID INDEX_OPEN LIT_INT INDEX_CLOSE ; 
 
+stmts: stmnts stmt SEMICOL | ;
 stmt: 
     | ID ASS value
     | funcall
