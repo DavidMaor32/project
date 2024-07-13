@@ -17,4 +17,4 @@ public void e32(){
 /*
 asd
 */
-private int f(args>>int x):static{return 1;}
+private int f(args>>int: x):static{return 1;}
