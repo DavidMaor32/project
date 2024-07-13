@@ -1,4 +1,4 @@
-/*fails, maybe the comment but definatly something with the funcion(s)*/
+/* TODO:comment at end makes if fali*/
 public void func(){}
 
 /*
@@ -8,12 +8,13 @@ public int f(){
     }
 */
 
-
-
 public void e32(){
     var bool:r;
     var float:r<-true;
-    return;
+    
     }
 
-private int f(args>>int x){return 1;}
+/*
+asd
+*/
+private int f(args>>int x):static{return 1;}
