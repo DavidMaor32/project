@@ -2,5 +2,5 @@
 y.*
 *.c
 *.h
-.DS_Store
-.TODO
+.*
+!.gitignore
