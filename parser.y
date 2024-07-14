@@ -1,6 +1,6 @@
 %{
-#include 
-#include 
+#include <stdio.h>
+#include <string.h>
 #define printdent(x) for(int _ = 0; _ < x; _++) printf("\t");
 int yylex();
 int yyerror(const char* s);
@@ -11,20 +11,22 @@ typedef enum {
     true
 } bool;
 
+bool flag = 0;
+
 typedef struct {
     char* str;
     unsigned int size;
 } string;
 
-typedef struct{
-    char* token;
-    struct node* left;
-    struct node* right;
-}node;
+// typedef struct{
+//     char* token;
+//     struct node* left;
+//     struct node* right;
+// }node;
 
-node* mknode(char* token, node* left, node* right);
-void printree(node* tree);
-void indentree(node* tree, int level);
+// node* mknode(char* token, node* left, node* right);
+// void printree(node* tree);
+// void indentree(node* tree, int level);
 
 %}
 %union {
@@ -45,7 +47,7 @@ void indentree(node* tree, int level);
 %token IF ELSE
 %token WHILE DO FOR
 %token ID STRLEN VAR ASS
-%token PUBLIC PRIVATE ARGS STATIC MAIN RETURN VOID
+%token PUBLIC PRIVATE ARGS STATIC RETURN MAIN VOID
 
 %token AND EQ GRTR GRTR_EQ LESS LESS_EQ NOT NOT_EQ OR  
 %token DIV '-' '+' '*'
@@ -68,6 +70,7 @@ void indentree(node* tree, int level);
 %token  P_CHAR
 %token  LIT_STRING STRING
 
+
 %left COMMA
 %right ASS
 %left OR
@@ -86,19 +89,126 @@ void indentree(node* tree, int level);
 %right INDEX_OPEN
 %%
 s: program  { 
-                // printf("parsed successfully! %d:%d\n", yylineno, col); return 0; 
-                printree($1);
+                
+                 printf("parsed successfully! %d:%d\n", yylineno, col); return 0; 
+                // printree($1);
             }
 
-program: functions;
+program: functions ;
 
+
+/* ============== FUNCTIONS ============== */
+functions: functions function | function  ;
+function: modifier func | error {yyerror("missing modifier!\n");}
+modifier: PUBLIC | PRIVATE;
+func: func_void | func_ret;
+
+func_ret: type { if(flag==1)flag=-1; } func_sign BLOCK_OPEN ret_body  { if(flag==-1)flag=1; }BLOCK_CLOSE ;
+
+func_void: VOID { flag=1; } func_sign BLOCK_OPEN  body  BLOCK_CLOSE { flag=0; }
+
+func_sign: ID PARENT_OPEN params PARENT_CLOSE static;
+static: COLON STATIC | ;
+params: ARGS lists | ;
+lists: dec_str
+    | lists SEMICOL type COLON list 
+    | type COLON list
+    | type list { yyerror("missing ':'"); }
+
+dec_str: STRING COLON strs ;
+strs: strs COMMA ID size | ID size ;
+size: INDEX_OPEN LIT_INT INDEX_CLOSE ;
+
+list: list COMMA ID | ID ;
+return: {if(strcmp(yytext, "return")!=0) yyerror("missing return statement!\n");} RETURN  expr SEMICOL {if (flag==1)yyerror("void function can't return!\n");} 
+
+/* ============== BODY - BLOCK  ============== */
+body: dec
+    | functions
+    | ret_stmts
+    | dec functions
+    | dec ret_stmts
+    | functions ret_stmts 
+    | dec functions ret_stmts 
+    |;
+
+ret_body: stmts
+    | dec stmts
+    | functions stmts 
+    | dec functions stmts  ;
+
+nested_stmt_body: code_block | ret_stmt ;
+code_block: BLOCK_OPEN ret_stmts BLOCK_CLOSE | BLOCK_OPEN  BLOCK_CLOSE;
+block: dec 
+    | dec ret_stmts 
+    | ret_stmts ;
+
+/* ============== STATEMENTS ============== */
+stmts:  ret_stmt stmts | return ;
+stmt: ass_stmt | func_call  | if_stmt  | if_else_stmt  | loop_stmt | code_block ;
+ret_stmts: ret_stmt ret_stmts | ret_stmt ;
+ret_stmt: stmt | return ;
+
+func_call: ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL ;
+func_expr: func_expr COMMA expr | expr | ;
+
+ass_stmt: lhs ASS expr SEMICOL | lhs ASS func_call ;
+lhs: ID | ID INDEX_OPEN expr INDEX_CLOSE | DEREF ; 
+
+if_stmt: IF PARENT_OPEN expr PARENT_CLOSE  nested_stmt_body  %prec IFX;
+
+if_else_stmt: IF PARENT_OPEN expr PARENT_CLOSE nested_stmt_body ELSE nested_stmt_body ;
+
+loop_stmt: for | while | do;
+
+for: FOR PARENT_OPEN init SEMICOL expr SEMICOL ID ASS expr PARENT_CLOSE nested_stmt_body;
+init: ID ASS expr;
+
+do: DO nested_stmt_body WHILE PARENT_OPEN expr PARENT_CLOSE SEMICOL;
+while: WHILE PARENT_OPEN expr PARENT_CLOSE nested_stmt_body;
+
+/* ============== DECLARATIONS ============== */
+dec: dec declr_vars | declr_vars;
+declr_vars: VAR type COLON ID ass vars SEMICOL 
+    | VAR ID { yyerror("missing type!\n"); };
+vars: vars COMMA ID ass |;
+ass: ASS expr |;
+
+/* ============== EXPRESSIONS ============== */
+expr: value
+    | PARENT_OPEN expr PARENT_CLOSE 
+    | opt_unary 
+    | STRLEN string STRLEN
+    | string INDEX_OPEN expr INDEX_CLOSE %prec INDEX_OPEN
+    | opt_binary;
+
+opt_unary: NOT expr
+    | '-' expr %prec UMINUS
+    | '+' expr %prec UPLUS
+    | '*' expr %prec DEREF
+    | REF expr;
+
+opt_binary: expr '+' expr
+    | expr '-' expr 
+    | expr '*' expr
+    | expr DIV expr
+    | expr AND expr
+    | expr OR expr
+    | expr EQ expr
+    | expr NOT_EQ expr
+    | expr GRTR expr
+    | expr GRTR_EQ expr
+    | expr LESS expr
+    | expr LESS_EQ expr;
+
+/* ============== TYPES - VALUES ============== */
 literal: LIT_BOOL 
     | LIT_CHAR 
     | LIT_REAL 
     | LIT_FLOAT 
     | LIT_INT;
 
-value: literal | ID;
+value: literal | ID | LIT_STRING ;
 
 string: ID | LIT_STRING;
 
@@ -114,100 +224,6 @@ ptype: P_CHAR
     | P_FLOAT 
     | P_INT;
 
-functions: function 
-    | functions function;
-
-function: modifier func;
-func: func_void | func_ret;
-
-modifier: PUBLIC | PRIVATE;
-
-func_ret: type func_sign BLOCK_OPEN block return BLOCK_CLOSE
-    | type func_sign BLOCK_OPEN block BLOCK_CLOSE { yyerror("missing return statement!"); }
-
-func_void: VOID func_sign BLOCK_OPEN block BLOCK_CLOSE
-    | VOID func_sign BLOCK_OPEN block RETURN { yyerror("void function can't return value"); } 
-
-func_sign: ID PARENT_OPEN params PARENT_CLOSE static;
-static: COLON STATIC |;
-params: ARGS lists |;
-lists: dec_str
-    | lists SEMICOL type COLON list 
-    | type COLON list
-    | type list { yyerror("missing ':'"); }
-
-dec_str: STRING strs;
-strs: strs COMMA ID size | ID size;
-size: INDEX_OPEN LIT_INT INDEX_CLOSE;
-list: list COMMA ID | ID;
-return: RETURN expr SEMICOL;
-
-block: dec functions stmts
-    | dec stmts
-    | functions stmts
-    | stmts 
-    | dec
-    |
-    ;
-
-stmts: ;
-
-
-stmt: ass_stmt | func_call | if_stmt | if_else_stmt | loop_stmt; 
-
-if_stmt: IF PARENT_OPEN expr PARENT_CLOSE body %prec IFX;
-if_else_stmt: IF PARENT_OPEN expr PARENT_CLOSE body ELSE body;
-
-body: stmt | BLOCK_OPEN stmts BLOCK_CLOSE | BLOCK_OPEN BLOCK_CLOSE;
-
-func_call: lhs ASS ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL
-    | ID PARENT_OPEN func_expr PARENT_CLOSE SEMICOL;
-
-func_expr: func_expr COMMA expr | expr |;
-
-ass_stmt: lhs ASS expr SEMICOL;
-lhs: ID | ID INDEX_OPEN expr INDEX_CLOSE;
-
-loop_stmt: for | while | do;
-
-for: FOR PARENT_OPEN init SEMICOL expr SEMICOL ID ASS expr PARENT_CLOSE body;
-init: ID ASS expr;
-
-do: DO body WHILE PARENT_OPEN expr PARENT_CLOSE SEMICOL;
-while: WHILE PARENT_OPEN expr PARENT_CLOSE body;
-
-dec: declr_vars | dec declr_vars;
-declr_vars: VAR type COLON ID ass vars SEMICOL 
-    | VAR ID { yyerror("missing type"); };
-vars: vars COMMA ID ass |;
-ass: ASS expr |;
-
-expr: value 
-    | PARENT_OPEN expr PARENT_CLOSE 
-    | opt_unary 
-    | STRLEN string STRLEN
-    | string INDEX_OPEN expr INDEX_CLOSE %prec INDEX_OPEN
-    | opt_binary;
-
-opt_unary: NOT expr
-    | '-' expr %prec UMINUS
-    | '+' expr %prec UPLUS
-    | '*' expr %prec DEREF {printf("DEREF \n");}
-    | REF expr;
-
-opt_binary: expr '+' expr
-    | expr '-' expr 
-    | expr '*' expr {printf("MUL \n");}
-    | expr DIV expr
-    | expr AND expr
-    | expr OR expr
-    | expr EQ expr
-    | expr NOT_EQ expr
-    | expr GRTR expr
-    | expr GRTR_EQ expr
-    | expr LESS expr
-    | expr LESS_EQ expr;
-
 %%
 
 #include "lex.yy.c"
@@ -220,12 +236,12 @@ int main() {
 }
 
 int yyerror(const char* s) {
-    fprintf(stderr, "\n ERROR: \"%s\"\tTOKEN:%s\n", yylineno, col, s, yytext);
+    fprintf(stderr, "\n<%d:%d> ERROR: \"%s\"\tTOKEN:%s\n", yylineno, col, s, yytext);
     exit(1);
     return 1;
 }
 
-node* mknode(char* token, node* left, node* right){
+/* node* mknode(char* token, node* left, node* right){
     node* newnode = (node*)malloc(sizeof(node));
     newnode->token = strdup(token); 
     newnode->left = left;
@@ -239,4 +255,4 @@ void printree(node* tree){
 
 void indentree(node* tree, int level){
     
-}
+} */

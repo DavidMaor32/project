@@ -21,7 +21,8 @@ ID  {LETTER}({CHARACHTER}|_)*
 [ \t\s\r]           {   col++;}
 [ \n]               {   yylineno++; col = 1; }
 "/*"(.|\n)*"*/"     {   for(int i =0;i<yyleng;i++) {if(yytext[i] == '\n') {yylineno++;col=0;} col++;} }
-"/*"                {   yyerror("missing closing comment!"); }          
+"/*"                {   yyerror("missing closing comment!"); }     
+"*/"                {   yyerror("missing opening comment!"); }         
  /*KEYWORDS*/
 bool                {   col+= yyleng;return BOOL; }
 char                {   col+= yyleng;return CHAR; }
