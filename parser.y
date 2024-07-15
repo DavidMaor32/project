@@ -1,10 +1,97 @@
+/*
+public void foo(args>> int: x, y, z; float: f){
+    if (x > y) {
+        x <- x + y;
+    }
+    else {
+        y <- x + y + z;
+        z <- y * 2;
+        f <- z;
+    }
+}
+private char goo(): static{
+    return ‘a’;
+}
+
+(CODE
+    (FUNC
+        foo                 1
+        NON-STATIC          1
+        PUBLIC              1
+        (ARGS               1
+            (INT            1
+                x           1
+                y           1
+                z           1
+            )               1
+            (FLOAT          1
+                f           1
+            )               1
+        )                   1
+        (RETURN VOID)       1
+        (BODY
+            (IF-ELSE
+                (>
+                    x
+                    y
+                )
+                (BLOCK
+                    (ASS x
+                        (+
+                            x
+                            y
+                        )
+                    )
+                )
+                (BLOCK
+                    (ASS y
+                        (+
+                            (+
+                                x
+                                y
+                            )
+                        z
+                        )
+                    )
+                    (
+                        (ASS z
+                            (*
+                                y
+                                2
+                            )
+                        )
+                        (ASS f
+                            z
+                        )
+                    )
+                )
+            )
+        )
+    )
+    (FUNC
+        goo
+        STATIC
+        PRIVATE
+        (ARGS NONE)
+        (RET CHAR)
+        (BODY
+            (RET ‘a’)
+        )
+    )
+)
+*/
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 #define printdent(x) for(int _ = 0; _ < x; _++) printf("\t");
+#define mktree(token) mknode(token, NULL, NULL);
+
 int yylex();
 int yyerror(const char* s);
 int yylineno, col;
+int flag = 0;
 char* yytext;
 typedef enum {
     false, 
@@ -18,29 +105,33 @@ typedef struct {
     unsigned int size;
 } string;
 
-// typedef struct{
-//     char* token;
-//     struct node* left;
-//     struct node* right;
-// }node;
+typedef struct node{
+    char* token;
+    struct node* left;
+    struct node* right;
+}node;
 
-// node* mknode(char* token, node* left, node* right);
-// void printree(node* tree);
-// void indentree(node* tree, int level);
+node* mktree(char* token, node* left, node* right);
+void deletetree(node* tree);
+bool hasleft(node* tree)    { return tree->left != NULL; }
+bool hasright(node* tree)   { return tree->right != NULL; }
+bool isleaf(node* tree)     { return tree != NULL && !hasleft(tree) && !hasright(tree); }
+void printree(node* tree);
+void indentree(node* tree, int level);
 
 %}
 %union {
-    int _int;
-    float _float;
-    double _real;
-    char _char;
-    bool _bool;
-    struct string* _str;
-    int* p_int;
-    float* p_float;
-    double* p_real;
+    // int _int;
+    // float _float;
+    // double _real;
+    // char _char;
+    // bool _bool;
+    // struct string* _str;
+    // int* p_int;
+    // float* p_float;
+    // double* p_real;
+    // void* _nullptr;
     char* p_char;
-    void* _nullptr;
     struct node* node;
 }
 
@@ -88,10 +179,19 @@ typedef struct {
 %nonassoc UPLUS
 %right INDEX_OPEN
 %%
+
+/*
+a-or-b: 'a'|'b'     { printf("found either a or b"); }
+
+a-or-b:
+     'a'             { printf("case a"); }
+    |'b'             { printf("case b"); }
+    ;
+*/
+
 s: program  { 
-                
                  printf("parsed successfully! %d:%d\n", yylineno, col); return 0; 
-                // printree($1);
+                //printree();
             }
 
 program: functions ;
@@ -108,6 +208,8 @@ func_ret: type { if(flag==1)flag=-1; } func_sign BLOCK_OPEN ret_body  { if(flag=
 func_void: VOID { flag=1; } func_sign BLOCK_OPEN  body  BLOCK_CLOSE { flag=0; }
 
 func_sign: ID PARENT_OPEN params PARENT_CLOSE static;
+static: COLON STATIC | ;
+params: ARGS lists | ;
 static: COLON STATIC | ;
 params: ARGS lists | ;
 lists: dec_str
@@ -161,11 +263,11 @@ if_else_stmt: IF PARENT_OPEN expr PARENT_CLOSE nested_stmt_body ELSE nested_stmt
 
 loop_stmt: for | while | do;
 
-for: FOR PARENT_OPEN init SEMICOL expr SEMICOL ID ASS expr PARENT_CLOSE nested_stmt_body;
+for: FOR PARENT_OPEN init SEMICOL expr SEMICOL ID ASS expr PARENT_CLOSE body;
 init: ID ASS expr;
 
-do: DO nested_stmt_body WHILE PARENT_OPEN expr PARENT_CLOSE SEMICOL;
-while: WHILE PARENT_OPEN expr PARENT_CLOSE nested_stmt_body;
+do: DO body WHILE PARENT_OPEN expr PARENT_CLOSE SEMICOL;
+while: WHILE PARENT_OPEN expr PARENT_CLOSE body;
 
 /* ============== DECLARATIONS ============== */
 dec: dec declr_vars | declr_vars;
@@ -241,7 +343,7 @@ int yyerror(const char* s) {
     return 1;
 }
 
-/* node* mknode(char* token, node* left, node* right){
+node* mknode(char* token, node* left, node* right){
     node* newnode = (node*)malloc(sizeof(node));
     newnode->token = strdup(token); 
     newnode->left = left;
@@ -249,10 +351,28 @@ int yyerror(const char* s) {
     return newnode;
 }
 
+
+void deletetree(node* tree){ 
+    if(tree == NULL)
+        return;
+    
+    deletetree(tree->left);
+    deletetree(tree->right);
+    free(tree->token);
+    free(tree);
+}
+
 void printree(node* tree){
+    if(tree == NULL)
+        yyerror("UNEXPECTED ERROR WHILE CONSTRUCTING AST");
     indentree(tree, 0);
 }
 
 void indentree(node* tree, int level){
+    if(tree == NULL)
+        return;
+
+    bool brackets = hasleft(tree) && hasright(tree);
+    printdent(level); printf("(%s", tree->token);
     
 } */
