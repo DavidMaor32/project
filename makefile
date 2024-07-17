@@ -31,7 +31,7 @@ TOKEN = tokenizer.exe
 
 CC = gcc
 FLAGS = -ll -Ly
-FLAGS_DEBUG = --debug --verbose --graph 
+FLAGS_DEBUG = --debug --verbose --graph -Wall
 LEX = lex
 YACC = yacc
 LEX_OUT = lex.yy.c
@@ -57,7 +57,7 @@ $(YACC_OUT): $(YACC_SRC)
 # debug
 debug: $(LEX_OUT)
 	$(YACC) $(FLAGS_DEBUG) $(YACC_SRC)
-	$(CC) -o $(DEBUG) $(YACC_OUT) $(FLAGS)
+	$(CC) -o $(DEBUG) -g $(YACC_OUT) $(FLAGS)
 	@make clean
 
 # tokenizer

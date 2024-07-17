@@ -1,6 +1,8 @@
 *.exe
+*.exe.*
 y.*
 *.c
 *.h
 .*
 !.gitignore
+.vscode
