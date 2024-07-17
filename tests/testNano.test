@@ -1,3 +1,2 @@
-public void e(args>> int:a){var int: d; }
-private void d(){}
-public void f(){}
+var int:x, t<-23, a<- (|str|+2) && *ptr == 2;
+var bool: x<-false, t<-true;
