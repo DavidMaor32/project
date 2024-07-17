@@ -181,7 +181,7 @@ init        : ID ASS expr
 do          : DO nested_stmt_body WHILE PARENT_OPEN expr PARENT_CLOSE SEMICOL
             ;
 
-while       : WHILE PARENT_OPEN expr PARENT_CLOSE nested_stmt_body { $$ = mkbinary("WHILE", $3, $5); }
+while       : WHILE PARENT_OPEN expr PARENT_CLOSE nested_stmt_body 
             ;
 
 /* ============== DECLARATIONS ============== */
