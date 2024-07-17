@@ -9,12 +9,15 @@ int_dec     0|{NONZERO}{DIGIT}*
 int_hex     0(x|X){DIGIT_HEX}+
 lit_int         {SIGN}?({int_hex}|{int_dec})
 ex_notation (e|E){int_dec}
-double      {SIGN}?({int_dec}?\.{int_dec}|{int_dec}\.{int_dec}?){ex_notation}?
+double      {SIGN}?({int_dec}?\.{int_dec}|{int_dec}\.{int_dec}?)
+double_ex   {double}{ex_notation}
 float       ({double}|{lit_int}\.)(f|F)
+float_ex    {double_ex}{ex_notation}(f|F)
 string      \"[ -!#-~]*\"
 ID  {LETTER}({CHARACHTER}|_)*
 %{
     #include <stdlib.h>
+    int yyerror(const char* s);
     int col = 1;
 %}
 %%
@@ -63,14 +66,20 @@ main                {   col+= yyleng;return MAIN; }
 [*+-]               {   col+= yyleng;return *yytext; }
 "&"                 {   col+= yyleng;return REF; }
  /*Literals*/
-true|false          {   col+= yyleng;return LIT_BOOL; }
-{char}              {   col+= yyleng;return LIT_CHAR; }
-{int_dec}           {   col+= yyleng;return LIT_INT; }
-{int_hex}           {   col+= yyleng;return LIT_INT; }
-{double}            {   col+= yyleng;return LIT_REAL; }
-{float}             {   col+= yyleng;return LIT_FLOAT; }
-{string}            {   col+= yyleng;return LIT_STRING; }
-{ID}                {   col+= yyleng;return ID; }
+true|false          {   col+= yyleng; yylval.str = strdup(yytext); return LIT_BOOL; }
+{char}              {   col+= yyleng; yylval.str = strdup(yytext); return LIT_CHAR; }
+\'.+\'              {   col+= yyleng;yyerror("literal char must have one character!\n"); }
+\'\'                {   col+= yyleng;yyerror("literal char can\'t be empty!\n"); }
+\'                  {   col+= yyleng;yyerror("literal char can\'t be empty!\n"); }
+{float_ex}          {   col+= yyleng; yylval.str = strdup(yytext); return LIT_FLOAT; }
+{float}             {   col+= yyleng; yylval.str = strdup(yytext); return LIT_FLOAT; }
+{double_ex}         {   col+= yyleng; yylval.str = strdup(yytext); return LIT_REAL; }
+{double}            {   col+= yyleng; yylval.str = strdup(yytext); return LIT_REAL; }
+{int_hex}           {   col+= yyleng; yylval.str = strdup(yytext); return LIT_INT; }
+{int_dec}           {   col+= yyleng; yylval.str = strdup(yytext); return LIT_INT; }
+{string}            {   col+= yyleng; yylval.str = strdup(yytext); return LIT_STRING; }
+\"                  {   col+= yyleng;yyerror("missing terminating \'\"\' character!\n");}
+{ID}                {   col+= yyleng; yylval.str = strdup(yytext); return ID;}
  /*others*/
 ";"                 {   col+= yyleng;return SEMICOL; }
 ","                 {   col+= yyleng;return COMMA; }
